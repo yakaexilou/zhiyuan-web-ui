@@ -1,5 +1,5 @@
 import { createApp, watchEffect } from 'vue';
-
+import { registerFastCrud } from "#/plugins/fast-crud/setup-fast-crud";
 import { registerAccessDirective } from '@vben/access';
 import { initTippy, registerLoadingDirective } from '@vben/common-ui';
 import { MotionPlugin } from '@vben/plugins/motion';
@@ -67,7 +67,10 @@ async function bootstrap(namespace: string) {
       useTitle(pageTitle);
     }
   });
-
+  // 使用Antd UI
+  // form 表单编辑器
+  // setupAntd();
+  registerFastCrud(app);
   app.mount('#app');
 }
 
