@@ -118,5 +118,17 @@ export interface StationQuery extends PageQuery {
    * 状态
    */
   status?: number;
+}
 
+export interface DeptStationVo {
+  id: string;
+  /**
+   * antd组件必须要这个属性 实际是没有这个属性的
+   */
+  key: string;
+  parentId: number;
+  label: string;
+  weight: number;
+  children?: DeptTree[];
+  nodeType: string;
 }

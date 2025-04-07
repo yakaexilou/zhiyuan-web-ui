@@ -55,7 +55,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '站房',
-    field: 'stationId',
+    field: 'stationName',
   },
   {
     title: '采暖面积',
@@ -68,10 +68,22 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '建筑类型',
     field: 'buildType',
+    slots: {
+      default: ({ row }) => {
+        // 可选从DictEnum中获取 DictEnum.SYS_ENABLE_STATE 便于维护
+        return renderDict(row.status, 'hms_build_type');
+      },
+    },
   },
   {
     title: '类型',
     field: 'category',
+    slots: {
+      default: ({ row }) => {
+        // 可选从DictEnum中获取 DictEnum.SYS_ENABLE_STATE 便于维护
+        return renderDict(row.status, 'hms_area_category');
+      },
+    },
   },
   {
     title: '所属上级',
@@ -88,6 +100,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '控制方式',
     field: 'buildControlType',
+    slots: {
+      default: ({ row }) => {
+        // 可选从DictEnum中获取 DictEnum.SYS_ENABLE_STATE 便于维护
+        return renderDict(row.status, 'hms_control_type');
+      },
+    },
   },
   {
     title: '单元每层户数',
@@ -201,7 +219,11 @@ export const drawerSchema: FormSchemaGetter = () => [
     label: '控制方式',
     fieldName: 'buildControlType',
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      options: getDictOptions('hms_control_type'),
+      buttonStyle: 'solid',
+      optionType: 'button',
+    },
   },
   {
     label: '单元每层户数',
