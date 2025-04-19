@@ -2,7 +2,7 @@ import type { PageQuery, BaseEntity } from '#/api/common';
 
 export interface DeviceVO {
   /**
-   * 
+   * ID
    */
   id: string | number;
 
@@ -12,14 +12,14 @@ export interface DeviceVO {
   name: string;
 
   /**
-   * 所属产品
-   */
-  productId: string | number;
-
-  /**
    * 设备编码
    */
   code: string;
+
+  /**
+   * 产品类型
+   */
+  productId: string | number;
 
   /**
    * 通讯地址
@@ -27,27 +27,12 @@ export interface DeviceVO {
   comAddr: string;
 
   /**
-   * 属性
-   */
-  attributes: string;
-
-  /**
-   * 云网关(前置机)
-   */
-  cloudGatewayId: string | number;
-
-  /**
-   * 硬件网关
-   */
-  gatewayId: string | number;
-
-  /**
-   * 在线状态
+   * 是否在线
    */
   online: number;
 
   /**
-   * 最后链接时间
+   * 注册时间
    */
   lastRegisterTime: string;
 
@@ -55,7 +40,7 @@ export interface DeviceVO {
 
 export interface DeviceForm extends BaseEntity {
   /**
-   * 
+   * ID
    */
   id?: string | number;
 
@@ -65,14 +50,14 @@ export interface DeviceForm extends BaseEntity {
   name?: string;
 
   /**
-   * 所属产品
-   */
-  productId?: string | number;
-
-  /**
    * 设备编码
    */
   code?: string;
+
+  /**
+   * 产品类型
+   */
+  productId?: string | number;
 
   /**
    * 通讯地址
@@ -80,27 +65,22 @@ export interface DeviceForm extends BaseEntity {
   comAddr?: string;
 
   /**
-   * 属性
-   */
-  attributes?: string;
-
-  /**
-   * 云网关(前置机)
+   * 云网关id
    */
   cloudGatewayId?: string | number;
 
   /**
-   * 硬件网关
+   * 网关
    */
   gatewayId?: string | number;
 
   /**
-   * 在线状态
+   * 设备属性
    */
-  online?: number;
+  attributes?: string;
 
   /**
-   * 最后链接时间
+   * 注册时间
    */
   lastRegisterTime?: string;
 
@@ -113,24 +93,9 @@ export interface DeviceQuery extends PageQuery {
   name?: string;
 
   /**
-   * 所属产品
-   */
-  productId?: string | number;
-
-  /**
    * 设备编码
    */
   code?: string;
-
-  /**
-   * 硬件网关
-   */
-  gatewayId?: string | number;
-
-  /**
-   * 在线状态
-   */
-  online?: number;
 
   /**
     * 日期范围参数

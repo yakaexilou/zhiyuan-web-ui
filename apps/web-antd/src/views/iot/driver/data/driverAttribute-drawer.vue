@@ -6,13 +6,15 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { deviceAdd, deviceInfo, deviceUpdate } from '#/api/iot/device';
+import { driverAttributeAdd, driverAttributeInfo, driverAttributeUpdate } from '#/api/iot/driverAttribute';
 
-import { modalSchema } from './data';
+import { drawerSchema } from './data';
 
 const emit = defineEmits<{ reload: [] }>();
 
 const isUpdate = ref(false);
+const isAdd = ref(false);
+
 const title = computed(() => {
   return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
 });
@@ -22,42 +24,44 @@ const [BasicForm, formApi] = useVbenForm({
     // 默认占满两列
     formItemClass: 'col-span-2',
     // 默认label宽度 px
-    labelWidth: 100,
+    labelWidth: 80,
     // 通用配置项 会影响到所有表单项
     componentProps: {
       class: 'w-full',
     }
   },
-  schema: modalSchema(),
+  schema: drawerSchema(),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
 
-
 const [BasicDrawer, drawerApi] = useVbenDrawer({
+  // 在这里更改宽度
+  class: 'w-[550px]',
+  fullscreenButton: false,
+  // 点击遮罩是否关闭
+  closeOnClickModal: false,
   onCancel: handleCancel,
   onConfirm: handleConfirm,
-  async onOpenChange(isOpen) {
+  onOpenChange: async (isOpen) => {
     if (!isOpen) {
       return null;
     }
     drawerApi.drawerLoading(true);
 
-    const { id, update } = drawerApi.getData() as DrawerProps;
-    isUpdate.value = update;
+    const { id } = drawerApi.getData() as { id?: number | string };
+    isUpdate.value = !!id;
 
-    if (id) {
-      await formApi.setFieldValue('parentId', id);
-      if (update) {
-        const record = await deviceInfo(id);
-        await formApi.setValues(record);
-      }
+    if (isUpdate.value && id) {
+      const record = await driverAttributeInfo(id);
+      await formApi.setValues(record);
     }
 
-    await (update && id ? initDeptUsers(id) : setLeaderOptions());
-    /** 部门选择 下拉框 */
-    await initDeptSelect(id);
-
+    const{ driverId} = drawerApi.getData() as { driverId?:number | string };
+    isAdd.value = !!driverId;
+    if(isAdd.value && driverId ){
+      formApi.setFieldValue('driverId', driverId);
+    }
     drawerApi.drawerLoading(false);
   },
 });
@@ -69,8 +73,9 @@ async function handleConfirm() {
     if (!valid) {
       return;
     }
+    // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? deptUpdate(data) : deptAdd(data));
+    await (isUpdate.value ? driverAttributeUpdate(data) : driverAttributeAdd(data));
     emit('reload');
     await handleCancel();
   } catch (error) {
@@ -79,6 +84,7 @@ async function handleConfirm() {
     drawerApi.drawerLoading(false);
   }
 }
+
 async function handleCancel() {
   drawerApi.close();
   await formApi.resetForm();
@@ -86,7 +92,7 @@ async function handleCancel() {
 </script>
 
 <template>
-  <BasicDrawer :close-on-click-modal="false" :title="title" class="w-[600px]">
+  <BasicDrawer :title="title">
     <BasicForm />
   </BasicDrawer>
 </template>

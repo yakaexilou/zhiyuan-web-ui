@@ -16,14 +16,14 @@ import {
 } from '#/adapter/vxe-table';
 
 import {
-  deviceExport,
-  deviceList,
-  deviceRemove,
-} from '#/api/iot/device';
-import type { DeviceForm } from '#/api/iot/device/model';
+  gatewayExport,
+  gatewayList,
+  gatewayRemove,
+} from '#/api/iot/gateway';
+import type { GatewayForm } from '#/api/iot/gateway/model';
 import { commonDownloadExcel } from '#/utils/file/download';
 
-import deviceDrawer from './device-drawer.vue';
+import gatewayDrawer from './gateway-drawer.vue';
 import { columns, querySchema } from './data';
 
 const formOptions: VbenFormProps = {
@@ -64,7 +64,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await deviceList({
+        return await gatewayList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -76,7 +76,7 @@ const gridOptions: VxeGridProps = {
     keyField: 'id',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'iot-device-index'
+  id: 'iot-gateway-index'
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -84,8 +84,8 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   gridOptions,
 });
 
-const [DeviceDrawer, drawerApi] = useVbenDrawer({
-  connectedComponent: deviceDrawer,
+const [GatewayDrawer, drawerApi] = useVbenDrawer({
+  connectedComponent: gatewayDrawer,
 });
 
 function handleAdd() {
@@ -93,32 +93,32 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(row: Required<DeviceForm>) {
+async function handleEdit(row: Required<GatewayForm>) {
   drawerApi.setData({ id: row.id });
   drawerApi.open();
 }
 
-async function handleDelete(row: Required<DeviceForm>) {
-  await deviceRemove(row.id);
+async function handleDelete(row: Required<GatewayForm>) {
+  await gatewayRemove(row.id);
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Required<DeviceForm>) => row.id);
+  const ids = rows.map((row: Required<GatewayForm>) => row.id);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await deviceRemove(ids);
+      await gatewayRemove(ids);
       await tableApi.query();
     },
   });
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(deviceExport, '设备信息数据', tableApi.formApi.form.values, {
+  commonDownloadExcel(gatewayExport, '网关信息数据', tableApi.formApi.form.values, {
     fieldMappingTime: formOptions.fieldMappingTime,
   });
 }
@@ -126,11 +126,11 @@ function handleDownloadExcel() {
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="设备信息列表">
+    <BasicTable table-title="网关信息列表">
       <template #toolbar-tools>
         <Space>
           <a-button
-            v-access:code="['iot:device:export']"
+            v-access:code="['iot:gateway:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
@@ -139,13 +139,13 @@ function handleDownloadExcel() {
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary" 
-            v-access:code="['iot:device:remove']" 
+            v-access:code="['iot:gateway:remove']" 
             @click="handleMultiDelete">
             {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
             type="primary"
-            v-access:code="['iot:device:add']"
+            v-access:code="['iot:gateway:add']"
             @click="handleAdd"
           >
             {{ $t('pages.common.add') }}
@@ -155,7 +155,7 @@ function handleDownloadExcel() {
       <template #action="{ row }">
         <Space>
           <ghost-button
-            v-access:code="['iot:device:edit']"
+            v-access:code="['iot:gateway:edit']"
             @click.stop="handleEdit(row)"
           >
             {{ $t('pages.common.edit') }}
@@ -168,7 +168,7 @@ function handleDownloadExcel() {
           >
             <ghost-button
               danger
-              v-access:code="['iot:device:remove']"
+              v-access:code="['iot:gateway:remove']"
               @click.stop=""
             >
               {{ $t('pages.common.delete') }}
@@ -177,6 +177,6 @@ function handleDownloadExcel() {
         </Space>
       </template>
     </BasicTable>
-    <DeviceDrawer @reload="tableApi.query()" />
+    <GatewayDrawer @reload="tableApi.query()" />
   </Page>
 </template>

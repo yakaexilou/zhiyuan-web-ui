@@ -1,47 +1,30 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import { getPopupContainer } from '@vben/utils';
+
 
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'name',
-    label: '名称',
+    label: '网关名称',
   },
   {
     component: 'Input',
     fieldName: 'code',
-    label: '设备编码',
-  },
+    label: '网关编码',
+  }
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
-  { type: 'checkbox', width: 60 },
   {
-    title: '名称',
+    title: '网关名称',
     field: 'name',
   },
   {
-    title: '设备编码',
+    title: '网关编码',
     field: 'code',
-  },
-  {
-    title: '产品类型',
-    field: 'productName',
-  },
-  {
-    title: '网关ID',
-    field: 'gatewayName',
-  },
-  {
-    title: '通讯地址',
-    field: 'comAddr',
-  },
-  {
-    title: '是否在线',
-    field: 'online',
   },
   {
     title: '注册时间',
@@ -58,7 +41,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const drawerSchema: FormSchemaGetter = () => [
   {
-    label: 'ID',
+    label: '',
     fieldName: 'id',
     component: 'Input',
     dependencies: {
@@ -67,43 +50,19 @@ export const drawerSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '名称',
+    label: '网关名称',
     fieldName: 'name',
     component: 'Input',
+    rules: 'required',
   },
   {
-    label: '设备编码',
+    label: '网关编码',
     fieldName: 'code',
     component: 'Input',
+    rules: 'required',
   },
   {
-    label: '产品类型',
-    fieldName: 'productId',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-    },
-  },
-  {
-    label: '通讯地址',
-    fieldName: 'comAddr',
-    component: 'Input',
-  },
-  {
-    label: '云网关id',
-    fieldName: 'cloudGatewayId',
-    component: 'Input',
-  },
-  {
-    label: '网关',
-    fieldName: 'gatewayId',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-    },
-  },
-  {
-    label: '注册时间',
+    label: '',
     fieldName: 'lastRegisterTime',
     component: 'DatePicker',
     componentProps: {
@@ -112,9 +71,4 @@ export const drawerSchema: FormSchemaGetter = () => [
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
     },
   },
-  {
-    fieldName: 'attributes',
-    component: 'Hidden',
-    show: false,
-  }
 ];

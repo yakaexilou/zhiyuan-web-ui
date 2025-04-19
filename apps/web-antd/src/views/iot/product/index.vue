@@ -9,22 +9,25 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
-import {   
+import {
   useVbenVxeGrid,
   vxeCheckboxChecked,
-  type VxeGridProps 
+  type VxeGridProps,
 } from '#/adapter/vxe-table';
 
 import {
-  deviceExport,
-  deviceList,
-  deviceRemove,
-} from '#/api/iot/device';
-import type { DeviceForm } from '#/api/iot/device/model';
+  productExport,
+  productList,
+  productRemove,
+} from '#/api/iot/product';
+import type { ProductForm } from '#/api/iot/product/model';
 import { commonDownloadExcel } from '#/utils/file/download';
 
-import deviceDrawer from './device-drawer.vue';
+import productDrawer from './product-drawer.vue';
 import { columns, querySchema } from './data';
+import productAttribute from "#/views/iot/productAttribute/index_drawer.vue";
+import IotProductAttribute from "#/views/iot/productAttribute/index.vue";
+import IotProductMetric from "#/views/iot/productMetric/index.vue";
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -64,7 +67,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await deviceList({
+        return await productList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -76,16 +79,15 @@ const gridOptions: VxeGridProps = {
     keyField: 'id',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'iot-device-index'
+  id: 'iot-product-index'
 };
-
 const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
 });
 
-const [DeviceDrawer, drawerApi] = useVbenDrawer({
-  connectedComponent: deviceDrawer,
+const [ProductDrawer, drawerApi] = useVbenDrawer({
+  connectedComponent: productDrawer,
 });
 
 function handleAdd() {
@@ -93,32 +95,52 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(row: Required<DeviceForm>) {
+async function handleEdit(row: Required<ProductForm>) {
   drawerApi.setData({ id: row.id });
   drawerApi.open();
 }
 
-async function handleDelete(row: Required<DeviceForm>) {
-  await deviceRemove(row.id);
+const curPid=ref()
+const curDid=ref()
+
+const openAttribute=ref(false)
+const openMetric=ref(false)
+
+async function handleDisAtts(row: Required<ProductForm>) {
+  openAttribute.value=true
+  curPid.value=row.id
+}
+
+async function handleDisMetric(row: Required<ProductForm>) {
+  curPid.value=row.id ;
+  curDid.value=row.driverId ;
+  if(curDid.value!=0){
+    openMetric.value=true ;
+  }
+}
+
+
+async function handleDelete(row: Required<ProductForm>) {
+  await productRemove(row.id);
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Required<DeviceForm>) => row.id);
+  const ids = rows.map((row: Required<ProductForm>) => row.id);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await deviceRemove(ids);
+      await productRemove(ids);
       await tableApi.query();
     },
   });
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(deviceExport, '设备信息数据', tableApi.formApi.form.values, {
+  commonDownloadExcel(productExport, '产品管理数据', tableApi.formApi.form.values, {
     fieldMappingTime: formOptions.fieldMappingTime,
   });
 }
@@ -126,11 +148,11 @@ function handleDownloadExcel() {
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="设备信息列表">
+    <BasicTable table-title="产品管理列表">
       <template #toolbar-tools>
         <Space>
           <a-button
-            v-access:code="['iot:device:export']"
+            v-access:code="['iot:product:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
@@ -138,14 +160,14 @@ function handleDownloadExcel() {
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
-            type="primary" 
-            v-access:code="['iot:device:remove']" 
+            type="primary"
+            v-access:code="['iot:product:remove']"
             @click="handleMultiDelete">
             {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
             type="primary"
-            v-access:code="['iot:device:add']"
+            v-access:code="['iot:product:add']"
             @click="handleAdd"
           >
             {{ $t('pages.common.add') }}
@@ -155,7 +177,7 @@ function handleDownloadExcel() {
       <template #action="{ row }">
         <Space>
           <ghost-button
-            v-access:code="['iot:device:edit']"
+            v-access:code="['iot:product:edit']"
             @click.stop="handleEdit(row)"
           >
             {{ $t('pages.common.edit') }}
@@ -168,15 +190,21 @@ function handleDownloadExcel() {
           >
             <ghost-button
               danger
-              v-access:code="['iot:device:remove']"
+              v-access:code="['iot:product:remove']"
               @click.stop=""
             >
               {{ $t('pages.common.delete') }}
             </ghost-button>
           </Popconfirm>
+          <ghost-button @click.stop="handleDisAtts(row)" >产品属性 </ghost-button>
+          <ghost-button  @click.stop="handleDisMetric(row)"  > 数据项 </ghost-button>
         </Space>
       </template>
     </BasicTable>
-    <DeviceDrawer @reload="tableApi.query()" />
+    <ProductDrawer @reload="tableApi.query()" />
+    <ProductAttributeDrawerComp />
+    <ProductMetricDrawerComp />
+    <a-drawer   v-model:open="openAttribute" width="40%" >       <IotProductAttribute  :productId="curPid" :driverId="curDid" /> </a-drawer>
+    <a-drawer   v-model:open="openMetric" width="40%" >          <IotProductMetric     :productId="curPid"  :driverId="curDid" /> </a-drawer>
   </Page>
 </template>
