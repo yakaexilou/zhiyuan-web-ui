@@ -4,7 +4,11 @@ import type { VbenFormProps } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { AreaForm } from '#/api/hms/area/model';
 
+import { ref } from 'vue';
+
 import { Page, useVbenDrawer } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+// import { setupStationQuerySelect } from '#/views/hms/station/select-unit';
 import { getVxePopupContainer } from '@vben/utils';
 
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
@@ -12,8 +16,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import { areaExport, areaList, areaRemove } from '#/api/hms/area';
 import { stationList } from '#/api/hms/station';
+// import { stationList } from '#/api/hms/station';
 import { commonDownloadExcel } from '#/utils/file/download';
-import { setupStationQuerySelect } from '#/views/hms/station/select-unit';
+import DeptStationTree from '#/views/hms/station/dept-station-tree.vue';
 
 import areaDrawer from './area-drawer.vue';
 import { columns, querySchema } from './data';
@@ -56,6 +61,22 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
+        // 部门树选择处理
+        if (selectDeptStation.value === undefined) {
+          Reflect.deleteProperty(formValues, 'deptId');
+          Reflect.deleteProperty(formValues, 'stationId');
+        } else {
+          if (selectDeptStation.value.nodeType === 'dept') {
+            formValues.deptId = selectDeptStation.value.id;
+          } else {
+            Reflect.deleteProperty(formValues, 'deptId');
+          }
+          if (selectDeptStation.value.nodeType === 'station') {
+            formValues.stationId = selectDeptStation.value.id.split('-')[1];
+          } else {
+            Reflect.deleteProperty(formValues, 'stationId');
+          }
+        }
         return await areaList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
@@ -70,6 +91,8 @@ const gridOptions: VxeGridProps = {
   // 表格全局唯一表示 保存列配置需要用到
   id: 'hms-area-index',
 };
+// 左边部门用
+const selectDeptStation = ref();
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
@@ -119,69 +142,108 @@ function handleDownloadExcel() {
     },
   );
 }
-console.log(tableApi);
-setupStationQuerySelect({
-  listApi: stationList,
-  fieldName: 'stationId',
-  queryName: 'name',
-  formApi: tableApi.formApi,
-});
+async function setupStationQuerySelect() {
+  const options = ref();
+  async function fetch(val: string) {
+    const stationListMap = await stationList({ name: val });
+    options.value = stationListMap.rows.map((item) => ({
+      label: `${item.name}[${item.code}]`,
+      value: item.id,
+    }));
+  }
+  await fetch('');
+  tableApi.formApi.updateSchema([
+    {
+      componentProps: {
+        optionFilterProp: 'label',
+        optionLabelProp: 'label',
+        options,
+        showSearch: true,
+        onSearch: async (val: string) => {
+          await fetch(val);
+        },
+      },
+      fieldName: 'stationId',
+    },
+  ]);
+}
+setupStationQuerySelect();
+// console.log(tableApi.formApi);
+// setupStationQuerySelect({
+//   listApi: stationList,
+//   fieldName: 'stationId',
+//   queryName: 'name',
+//   formApi: tableApi.formApi,
+// });
+// const { hasAccessByCodes } = useAccess();
+
+function deptSelect(k: any, { node }) {
+  selectDeptStation.value = node;
+  tableApi.reload();
+}
 </script>
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="区域信息列表">
-      <template #toolbar-tools>
-        <Space>
-          <a-button
-            v-access:code="['hms:area:export']"
-            @click="handleDownloadExcel"
-          >
-            {{ $t('pages.common.export') }}
-          </a-button>
-          <a-button
-            :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
-            type="primary"
-            v-access:code="['hms:area:remove']"
-            @click="handleMultiDelete"
-          >
-            {{ $t('pages.common.delete') }}
-          </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['hms:area:add']"
-            @click="handleAdd"
-          >
-            {{ $t('pages.common.add') }}
-          </a-button>
-        </Space>
-      </template>
-      <template #action="{ row }">
-        <Space>
-          <ghost-button
-            v-access:code="['hms:area:edit']"
-            @click.stop="handleEdit(row)"
-          >
-            {{ $t('pages.common.edit') }}
-          </ghost-button>
-          <Popconfirm
-            :get-popup-container="getVxePopupContainer"
-            placement="left"
-            title="确认删除？"
-            @confirm="handleDelete(row)"
-          >
-            <ghost-button
+    <div class="flex h-full gap-[8px]">
+      <DeptStationTree
+        class="w-[260px]"
+        @reload="() => tableApi.reload()"
+        @select="deptSelect"
+      />
+      <BasicTable table-title="区域信息列表" class="flex-1 overflow-hidden">
+        <template #toolbar-tools>
+          <Space>
+            <a-button
+              v-access:code="['hms:area:export']"
+              @click="handleDownloadExcel"
+            >
+              {{ $t('pages.common.export') }}
+            </a-button>
+            <a-button
+              :disabled="!vxeCheckboxChecked(tableApi)"
               danger
+              type="primary"
               v-access:code="['hms:area:remove']"
-              @click.stop=""
+              @click="handleMultiDelete"
             >
               {{ $t('pages.common.delete') }}
+            </a-button>
+            <a-button
+              type="primary"
+              v-access:code="['hms:area:add']"
+              @click="handleAdd"
+            >
+              {{ $t('pages.common.add') }}
+            </a-button>
+          </Space>
+        </template>
+        <template #action="{ row }">
+          <Space>
+            <ghost-button
+              v-access:code="['hms:area:edit']"
+              @click.stop="handleEdit(row)"
+            >
+              {{ $t('pages.common.edit') }}
             </ghost-button>
-          </Popconfirm>
-        </Space>
-      </template>
-    </BasicTable>
+            <Popconfirm
+              :get-popup-container="getVxePopupContainer"
+              placement="left"
+              title="确认删除？"
+              @confirm="handleDelete(row)"
+            >
+              <ghost-button
+                danger
+                v-access:code="['hms:area:remove']"
+                @click.stop=""
+              >
+                {{ $t('pages.common.delete') }}
+              </ghost-button>
+            </Popconfirm>
+          </Space>
+        </template>
+      </BasicTable>
+    </div>
     <AreaDrawer @reload="tableApi.query()" />
   </Page>
 </template>

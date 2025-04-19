@@ -60,3 +60,12 @@ export function stationUpdate(data: StationForm) {
 export function stationRemove(id: ID | IDS) {
   return requestClient.deleteWithMsg<void>(`/hms/station/${id}`);
 }
+
+/**
+ * 查询站房信息 Tree
+ * @param id id
+ * @returns 站房信息详情
+ */
+export function getDeptStationTree() {
+  return requestClient.get<DeptStationVo[]>(`/hms/station/deptTree`);
+}
