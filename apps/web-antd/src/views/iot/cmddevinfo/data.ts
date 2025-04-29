@@ -34,19 +34,22 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '设备序列号',
     field: 'sn',
+    width:250,
   },
   {
     title: '指令ID',
     field: 'mid',
-    visible: false,
+    width:150,
   },
   {
     title: '设备网关序列号',
     field: 'gwsn',
+    width:250,
   },
   {
     title: '创建时间',
     field: 'addtime',
+    width:150,
   },
   {
     title: '指令名称',
@@ -59,11 +62,6 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
   },
   {
-    title: '编码',
-    field: 'cmdcode',
-    width: 60,
-  },
-  {
     title: '读写标识',
     field: 'type',
     slots: {
@@ -72,10 +70,7 @@ export const columns: VxeGridProps['columns'] = [
         return renderDict(row.type, 'cmdtype');
       },
     },
-  },
-  {
-    title: '指令参数信息',
-    field: 'cmdparams',
+    width:100,
   },
   {
     title: '指令状态',
@@ -86,10 +81,17 @@ export const columns: VxeGridProps['columns'] = [
         return renderDict(row.cmdstat, 'cmdsendstat');
       },
     },
+    width:120,
+  },
+  {
+    title: '指令参数信息',
+    field: 'cmdparams',
+    width:250,
   },
   {
     title: '回复时间',
     field: 'returntime',
+    width:150,
   },
   {
     title: '回复信息',
@@ -120,70 +122,29 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
   },
   {
-    label: '指令ID',
-    fieldName: 'mid',
-    component: 'Input',
-    rules: 'required',
-  },
-  {
-    label: '设备网关序列号',
-    fieldName: 'gwsn',
-    component: 'Input',
-  },
-  {
     label: '指令编码',
     fieldName: 'cmdcode',
-    component: 'Input',
-    rules: 'required',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions('cmd_code_key'),
+    },
+    rules: 'selectRequired',
+    defaultValue:'40',
   },
   {
     label: '读写标识',
     fieldName: 'type',
     component: 'Select',
     componentProps: {
-      // 可选从DictEnum中获取 DictEnum.CMDTYPE 便于维护
       options: getDictOptions('cmdtype'),
     },
     rules: 'selectRequired',
+    defaultValue:'00',
   },
   {
-    label: '指令参数信息',
+    label: '指令参数',
     fieldName: 'cmdparams',
     component: 'Input',
-  },
-  {
-    label: '指令状态',
-    fieldName: 'cmdstat',
-    component: 'Select',
-    componentProps: {
-      // 可选从DictEnum中获取 DictEnum.CMDSENDSTAT 便于维护
-      options: getDictOptions('cmdsendstat'),
-    },
-    rules: 'selectRequired',
-  },
-  {
-    label: '创建时间',
-    fieldName: 'addtime',
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-  },
-  {
-    label: '回复时间',
-    fieldName: 'returntime',
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-  },
-  {
-    label: '回复信息',
-    fieldName: 'returninfo',
-    component: 'Input',
+    defaultValue:'',
   },
 ];

@@ -9,10 +9,10 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
-import {   
+import {
   useVbenVxeGrid,
   vxeCheckboxChecked,
-  type VxeGridProps 
+  type VxeGridProps
 } from '#/adapter/vxe-table';
 
 import {
@@ -138,8 +138,8 @@ function handleDownloadExcel() {
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
-            type="primary" 
-            v-access:code="['iot:cmddevinfo:remove']" 
+            type="primary"
+            v-access:code="['iot:cmddevinfo:remove']"
             @click="handleMultiDelete">
             {{ $t('pages.common.delete') }}
           </a-button>
@@ -154,12 +154,6 @@ function handleDownloadExcel() {
       </template>
       <template #action="{ row }">
         <Space>
-          <ghost-button
-            v-access:code="['iot:cmddevinfo:edit']"
-            @click.stop="handleEdit(row)"
-          >
-            {{ $t('pages.common.edit') }}
-          </ghost-button>
           <Popconfirm
             :get-popup-container="getVxePopupContainer"
             placement="left"
