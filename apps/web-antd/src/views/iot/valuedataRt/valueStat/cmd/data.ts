@@ -4,61 +4,31 @@ import type {VxeGridProps} from '#/adapter/vxe-table';
 import {getDictOptions} from '#/utils/dict';
 import {renderDict} from '#/utils/render';
 
-export const querySchema: FormSchemaGetter = () => [
-  {
-    component: 'Input',
-    fieldName: 'sn',
-    label: '设备序列号',
-  },
-  {
-    label: '指令状态',
-    fieldName: 'cmdstat',
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions('cmdsendstat'),
-    },
-    width:120,
-  },
-  {
-    component: 'RangePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'addtime',
-    label: '指令时间',
-  },
-];
+export const querySchema: FormSchemaGetter = () => [];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
-  { type: 'checkbox', width: 60 },
-  {
-    title: '',
-    field: 'id',
-    visible: false,
-  },
   {
     title: '设备序列号',
     field: 'sn',
-    width:250,
+    width:220,
   },
   {
     title: '指令ID',
     field: 'mid',
     width:150,
+    visible: false,
   },
   {
     title: '设备网关序列号',
     field: 'gwsn',
-    width:250,
+    minWidth:120,
   },
   {
     title: '创建时间',
     field: 'addtime',
-    width:150,
+    minWidth:150,
   },
   {
     title: '指令名称',
@@ -68,7 +38,7 @@ export const columns: VxeGridProps['columns'] = [
         return renderDict(row.cmdcode, 'dev_allcmd_code');
       },
     },
-    width: 100,
+    minWidth: 100,
   },
   {
     title: '读写标识',
@@ -79,7 +49,7 @@ export const columns: VxeGridProps['columns'] = [
         return renderDict(row.type, 'cmdtype');
       },
     },
-    width:100,
+    minWidth:60,
   },
   {
     title: '指令状态',
@@ -90,12 +60,12 @@ export const columns: VxeGridProps['columns'] = [
         return renderDict(row.cmdstat, 'cmdsendstat');
       },
     },
-    width:120,
+    minWidth:120,
   },
   {
     title: '指令参数信息',
     field: 'cmdparams',
-    width:250,
+    minWidth:80,
   },
   {
     title: '回复时间',
@@ -105,23 +75,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '回复信息',
     field: 'returninfo',
-  },
-  {
-    field: 'action',
-    fixed: 'right',
-    slots: { default: 'action' },
-    title: '操作',
-    width: 180,
+    minWidth:80,
   },
 ];
 
 export const drawerSchema: FormSchemaGetter = () => [
-
-  // {
-  //   label: '设备序列号',
-  //   fieldName: 'sn',
-  //   component: 'Input',
-  // },
   {
     label: '设备序列号',
     fieldName: 'sn',

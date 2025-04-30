@@ -1,30 +1,18 @@
 <script setup lang="ts">
-import type { Recordable } from '@vben/types';
+import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
+import {getVxePopupContainer} from '@vben/utils';
 
-import { ref } from 'vue';
+import {Modal, Popconfirm, Space} from 'ant-design-vue';
 
-import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { getVxePopupContainer } from '@vben/utils';
+import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps} from '#/adapter/vxe-table';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
-import dayjs from 'dayjs';
-
-import {
-  useVbenVxeGrid,
-  vxeCheckboxChecked,
-  type VxeGridProps
-} from '#/adapter/vxe-table';
-
-import {
-  valvedataExport,
-  valvedataList,
-  valvedataRemove,
-} from '#/api/iot/valvedata';
-import type { ValvedataForm } from '#/api/iot/valvedata/model';
-import { commonDownloadExcel } from '#/utils/file/download';
+import {valvedataExport, valvedataList, valvedataRemove,} from '#/api/iot/valvedata';
+import type {ValvedataForm} from '#/api/iot/valvedata/model';
+import {commonDownloadExcel} from '#/utils/file/download';
 
 import valvedataDrawer from './valvedata-drawer.vue';
-import { columns, querySchema } from './data';
+import {columns, querySchema} from './data';
+import {getDmList} from "#/api/iot/util";
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -112,6 +100,14 @@ function handleDownloadExcel() {
     fieldMappingTime: formOptions.fieldMappingTime,
   });
 }
+//getSnLib();
+function  getSnLib(){
+  let dmList: any;
+  dmList = getDmList("/iot/valvedata/listsn", {sn: "401"});
+  console.log( " == == ==  dmList : "+ dmList )
+
+}
+
 </script>
 
 <template>

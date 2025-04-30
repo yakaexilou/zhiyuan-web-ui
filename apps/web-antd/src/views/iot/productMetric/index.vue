@@ -1,31 +1,23 @@
 <script setup lang="ts">
-import type { Recordable } from '@vben/types';
+import {defineProps, watch} from 'vue';
 
+import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
+import {getVxePopupContainer} from '@vben/utils';
 
-import { ref, defineProps, watch } from 'vue';
+import {Modal, Popconfirm, Space} from 'ant-design-vue';
 
-import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { getVxePopupContainer } from '@vben/utils';
-
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
-import dayjs from 'dayjs';
-
-import {
-  useVbenVxeGrid,
-  vxeCheckboxChecked,
-  type VxeGridProps
-} from '#/adapter/vxe-table';
+import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps} from '#/adapter/vxe-table';
 
 import {
   productMetricExport,
   productMetricList,
   productMetricRemove,
 } from '#/api/iot/productMetric';
-import type { ProductMetricForm } from '#/api/iot/productMetric/model';
-import { commonDownloadExcel } from '#/utils/file/download';
+import type {ProductMetricForm} from '#/api/iot/productMetric/model';
+import {commonDownloadExcel} from '#/utils/file/download';
 
 import productMetricDrawer from './productMetric-drawer.vue';
-import { columns, querySchema } from './data';
+import {columns, querySchema} from './data';
 
 const props = defineProps({
   productId: {

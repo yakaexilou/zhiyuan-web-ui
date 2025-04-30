@@ -5,6 +5,7 @@ import type { PageResult } from '#/api/common';
 
 import { commonExport } from '#/api/helper';
 import { requestClient } from '#/api/request';
+import type {CmddevinfoForm} from "#/api/iot/cmddevinfo/model";
 
 /**
 * 查询阀门上报数据列表
@@ -24,6 +25,20 @@ export function valvedataExport(params?: ValvedataQuery) {
   return commonExport('/iot/valvedata/export', params ?? {});
 }
 
+export function valvedataListRealTime(params?: ValvedataQuery) {
+  return requestClient.get<PageResult<ValvedataVO>>('/iot/valvedata/rTlist', { params });
+}
+
+/**
+ * 导出阀门上报数据列表
+ * @param params
+ * @returns 阀门上报数据列表
+ */
+export function valvedataExportRealTime(params?: ValvedataQuery) {
+  return commonExport('/iot/valvedata/rTexport', params ?? {});
+}
+
+
 /**
  * 查询阀门上报数据详情
  * @param id id
@@ -38,8 +53,8 @@ export function valvedataInfo(id: ID) {
  * @param data
  * @returns void
  */
-export function valvedataAdd(data: ValvedataForm) {
-  return requestClient.postWithMsg<void>('/iot/valvedata', data);
+export function valvedataAdd(data: CmddevinfoForm) {
+  return requestClient.postWithMsg<void>('/iot/cmddevinfo/addCmd', data);
 }
 
 /**

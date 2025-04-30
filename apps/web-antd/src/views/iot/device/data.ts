@@ -1,6 +1,8 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import { getPopupContainer } from '@vben/utils';
+import {renderDict} from "#/utils/render";
+import {getDictOptions} from "#/utils/dict";
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -13,6 +15,14 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'code',
     label: '设备编码',
   },
+  {
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions('dev_stat'),
+    },
+    fieldName: 'online',
+    label: '状态',
+  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
@@ -22,6 +32,16 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '名称',
     field: 'name',
+  },
+  {
+    title: '状态',
+    field: 'devStat',
+    width: 60,
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.online, 'dev_stat');
+      },
+    },
   },
   {
     title: '设备编码',
@@ -38,10 +58,6 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '通讯地址',
     field: 'comAddr',
-  },
-  {
-    title: '是否在线',
-    field: 'online',
   },
   {
     title: '注册时间',

@@ -1,31 +1,19 @@
 <script setup lang="ts">
-import type { Recordable } from '@vben/types';
+import {ref} from 'vue';
 
-import { ref } from 'vue';
+import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
+import {getVxePopupContainer} from '@vben/utils';
 
-import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { getVxePopupContainer } from '@vben/utils';
+import {Modal, Popconfirm, Space} from 'ant-design-vue';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
-import dayjs from 'dayjs';
+import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps} from '#/adapter/vxe-table';
 
-import {
-  useVbenVxeGrid,
-  vxeCheckboxChecked,
-  type VxeGridProps
-} from '#/adapter/vxe-table';
-
-import {
-  driverExport,
-  driverList,
-  driverRemove,
-} from '#/api/iot/driver';
-import type { DriverForm } from '#/api/iot/driver/model';
-import { commonDownloadExcel } from '#/utils/file/download';
+import {driverExport, driverList, driverRemove,} from '#/api/iot/driver';
+import type {DriverForm} from '#/api/iot/driver/model';
+import {commonDownloadExcel} from '#/utils/file/download';
 
 import driverDrawer from './driver-drawer.vue';
-import { columns, querySchema } from './data';
-import {emitter} from "#/views/system/dict/mitt";
+import {columns, querySchema} from './data';
 import {emitt} from "#/views/iot/driver/mitt";
 
 const formOptions: VbenFormProps = {
@@ -158,7 +146,6 @@ function handleDownloadExcel() {
 </script>
 
 <template>
-  <Page :auto-content-height="true">
     <BasicTable table-title="driver列表">
       <template #toolbar-tools>
         <Space>
@@ -211,5 +198,4 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <DriverDrawer @reload="tableApi.query()" />
-  </Page>
 </template>

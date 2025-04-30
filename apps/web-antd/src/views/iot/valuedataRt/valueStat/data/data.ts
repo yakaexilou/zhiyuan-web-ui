@@ -2,42 +2,23 @@ import type {FormSchemaGetter} from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {dianLiangFormat, disD3custom1, valveFaWei, valveTemp} from "#/api/iot/gatewaydata";
 
+export const querySchema: FormSchemaGetter = () => [];
 
-export const querySchema: FormSchemaGetter = () => [
-  {
-    component: 'Input',
-    fieldName: 'sn',
-    label: '设备SN',
-  },
-  {
-    component: 'RangePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'beTime',
-    label: '采集时间',
-  },
-];
-
-// 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
-// export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
   {
     title: '设备SN',
     field: 'sn',
-    width: 250,
+    minWidth: 220,
   },
   {
     title: '接收时间',
     field: 'addtime',
-    width: 150,
+    minWidth: 150,
   },
   {
     title: '采集时间',
     field: 'time',
-    width: 150,
+    minWidth: 150,
   },
   {
     title: '电量',
@@ -146,60 +127,46 @@ export const columns: VxeGridProps['columns'] = [
     field: 'd2custom8',
     visible: false,
   },
-  // {
-  //   title: '备用1',
-  //   field: 'custom1',
-  //   width: 80,
-  //   visible: false,
-  // },
   {
     title: '备用2',
     field: 'custom2',
-    minWidth: 40,
+    width: 40,
     visible: false,
   },
   {
     title: '备用3',
     field: 'custom3',
-    minWidth: 40,
+    width: 40,
     visible: false,
   },
   {
     title: '备用4',
     field: 'custom4',
-    minWidth: 40,
+    width: 40,
     visible: false,
   },
   {
     title: '备用5',
     field: 'custom5',
-    minWidth: 40,
+    width: 40,
     visible: false,
   },
   {
     title: '备用6',
     field: 'custom6',
-    minWidth: 40,
+    width: 40,
     visible: false,
   },
   {
     title: '备用7',
     field: 'custom7',
-    minWidth: 40,
+    width: 40,
     visible: false,
   },
   {
     title: '备用8',
     field: 'custom8',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    field: 'action',
-    fixed: 'right',
-    slots: { default: 'action' },
-    title: '操作',
-    width: 180,
+    width: 40,
     visible: false,
   },
 ];

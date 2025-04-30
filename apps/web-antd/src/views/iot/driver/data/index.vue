@@ -1,31 +1,23 @@
 <script setup lang="ts">
-import type { Recordable } from '@vben/types';
+import {ref} from 'vue';
 
-import { ref } from 'vue';
+import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
+import {getVxePopupContainer} from '@vben/utils';
 
-import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { getVxePopupContainer } from '@vben/utils';
+import {Modal, Popconfirm, Space} from 'ant-design-vue';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
-import dayjs from 'dayjs';
-
-import {
-  useVbenVxeGrid,
-  vxeCheckboxChecked,
-  type VxeGridProps,
-} from '#/adapter/vxe-table';
+import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps,} from '#/adapter/vxe-table';
 
 import {
   driverAttributeExport,
   driverAttributeList,
   driverAttributeRemove,
 } from '#/api/iot/driverAttribute';
-import type { DriverAttributeForm } from '#/api/iot/driverAttribute/model';
-import { commonDownloadExcel } from '#/utils/file/download';
+import type {DriverAttributeForm} from '#/api/iot/driverAttribute/model';
+import {commonDownloadExcel} from '#/utils/file/download';
 
 import driverAttributeDrawer from './driverAttribute-drawer.vue';
-import { columns, querySchema } from './data';
-import {emitter} from "#/views/system/dict/mitt";
+import {columns, querySchema} from './data';
 import {emitt} from "#/views/iot/driver/mitt";
 
 const driverId = ref('');
@@ -137,7 +129,6 @@ emitt.on('rowClick', async (value) => {
 </script>
 
 <template>
-  <Page :auto-content-height="true">
     <BasicTable table-title="驱动属性列表">
       <template #toolbar-tools>
         <Space>
@@ -190,5 +181,4 @@ emitt.on('rowClick', async (value) => {
       </template>
     </BasicTable>
     <DriverAttributeDrawer @reload="tableApi.query()" />
-  </Page>
 </template>

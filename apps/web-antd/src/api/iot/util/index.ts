@@ -23,6 +23,53 @@ export function getProductSelect( attName , iPageNum , iPageSize ){
   return updateSelect( "/iot/product/list" , attName , iPageNum , iPageSize );
 }
 
+export function getSnValveSelect( attName ){
+  return updateSelectSn( "/iot/valvedata/listsn" , attName );
+}
+
+export function getSnGatewaySelect( attName ){
+  return updateSelectSn( "/iot/gatewaydata/listsn" , attName );
+}
+
+export function getSnCmdInfoSelect( attName ){
+  return updateSelectSn( "/iot/cmddevinfo/listsn" , attName );
+}
+
+
+export function updateSelectSn( url , attName ){
+  const options = ref([]);
+  fetchSel('');
+  async function fetchSel( val:string ){
+    let pinfo = { sn:val }
+    const dmdata =  await getSnDataInfo( url , pinfo );
+
+    console.log( "dmdata: "+ dmdata );
+    const t = [];
+    dmdata.forEach((item) => (
+      t.push({
+        label: item,
+        value: item,
+      })
+    ));
+    options.value=t;
+  }
+  let sel = [
+    {
+      componentProps: {
+        optionFilterProp: 'label',
+        optionLabelProp: 'label',
+        options,
+        showSearch: true,
+        onSearch: async (val: string) => {
+          await fetchSel(val);
+        },
+      },
+      fieldName: attName ,
+    },
+  ];
+  return sel ;
+}
+
 export function updateSelect( url , attName , iPageNum , iPageSize ){
   const options = ref([]);
   fetchSel('');
@@ -57,6 +104,10 @@ export function updateSelect( url , attName , iPageNum , iPageSize ){
 
 export function getDataInfo( url , params ){
   return requestClient.get( url , { params } );
+}
+
+export function getSnDataInfo( url , params ){
+  return requestClient.get( url , params );
 }
 
 export  function getDriverAtts( driverId ) {

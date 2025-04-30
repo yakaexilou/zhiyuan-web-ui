@@ -11,6 +11,18 @@ import {commonDownloadExcel} from '#/utils/file/download';
 
 import gatewaydataDrawer from './gatewaydata-drawer.vue';
 import {columns, querySchema} from './data';
+import {defineProps, watch} from "vue";
+
+const props = defineProps({
+  sn: {
+    type: String,
+    default: '',
+  }
+})
+
+watch(() => props.sn, (val) => {
+  tableApi.query( {"sn" : val } );
+});
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -53,6 +65,7 @@ const gridOptions: VxeGridProps = {
         return await gatewaydataList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
+          sn:props.sn,
           ...formValues,
         });
       },
@@ -74,53 +87,12 @@ const [GatewaydataDrawer, drawerApi] = useVbenDrawer({
   connectedComponent: gatewaydataDrawer,
 });
 
-
-async function handleDelete(row: Required<GatewaydataForm>) {
-  await gatewaydataRemove(row.id);
-  await tableApi.query();
-}
-
-function handleMultiDelete() {
-  const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Required<GatewaydataForm>) => row.id);
-  Modal.confirm({
-    title: '提示',
-    okType: 'danger',
-    content: `确认删除选中的${ids.length}条记录吗？`,
-    onOk: async () => {
-      await gatewaydataRemove(ids);
-      await tableApi.query();
-    },
-  });
-}
-
-function handleDownloadExcel() {
-  commonDownloadExcel(gatewaydataExport, '网关状态数据', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
-}
 </script>
 
 <template>
-  <Page :auto-content-height="true">
-    <BasicTable table-title="网关状态列表">
+  <Page :auto-content-height="true" class="custom-page">
+    <BasicTable table-title="网关历史数据列表" class="custom-page">
       <template #toolbar-tools>
-        <Space>
-          <a-button
-            v-access:code="['iot:gatewaydata:export']"
-            @click="handleDownloadExcel"
-          >
-            {{ $t('pages.common.export') }}
-          </a-button>
-          <a-button
-            :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
-            type="primary"
-            v-access:code="['iot:gatewaydata:remove']"
-            @click="handleMultiDelete">
-            {{ $t('pages.common.delete') }}
-          </a-button>
-        </Space>
       </template>
       <template #action="{ row }">
       </template>
@@ -128,3 +100,8 @@ function handleDownloadExcel() {
     <GatewaydataDrawer @reload="tableApi.query()" />
   </Page>
 </template>
+<style lang="scss" scoped>
+.custom-page {
+  height: calc(100vh - 300px);
+}
+</style>

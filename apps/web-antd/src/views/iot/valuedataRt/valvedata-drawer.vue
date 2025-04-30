@@ -6,10 +6,9 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { cmddevinfoAdd, cmddevinfoInfo, cmddevinfoUpdate } from '#/api/iot/cmddevinfo';
+import { valvedataAdd,  valvedataUpdate } from '#/api/iot/valvedata';
 
-import { drawerSchema } from './data';
-import {getGatewaySelect, getSnCmdInfoSelect} from "#/api/iot/util";
+import { drawerSchema } from './dataStat';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -47,14 +46,12 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       return null;
     }
     drawerApi.drawerLoading(true);
-    const { id } = drawerApi.getData() as { id?: number | string };
-    isUpdate.value = !!id;
 
-    if (isUpdate.value && id) {
-      const record = await cmddevinfoInfo(id);
-      await formApi.setValues(record);
+    const datas = drawerApi.getData() ;
+    const snval = datas["sn"];
+    if(snval!=null ){
+      formApi.setFieldValue('sn', snval );
     }
-
     drawerApi.drawerLoading(false);
   },
 });
@@ -68,7 +65,7 @@ async function handleConfirm() {
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? cmddevinfoUpdate(data) : cmddevinfoAdd(data));
+    await (isUpdate.value ? valvedataUpdate(data) : valvedataAdd(data));
     emit('reload');
     await handleCancel();
   } catch (error) {
@@ -82,6 +79,10 @@ async function handleCancel() {
   drawerApi.close();
   await formApi.resetForm();
 }
+
+// function disDevSnInfo(sn:string){
+//   alert(sn);
+// }
 
 </script>
 

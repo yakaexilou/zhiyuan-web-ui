@@ -6,10 +6,9 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { cmddevinfoAdd, cmddevinfoInfo, cmddevinfoUpdate } from '#/api/iot/cmddevinfo';
+import { gatewaydataAdd, gatewaydataInfo, gatewaydataUpdate } from '#/api/iot/gatewaydata';
 
 import { drawerSchema } from './data';
-import {getGatewaySelect, getSnCmdInfoSelect} from "#/api/iot/util";
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -47,11 +46,12 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       return null;
     }
     drawerApi.drawerLoading(true);
+
     const { id } = drawerApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
-      const record = await cmddevinfoInfo(id);
+      const record = await gatewaydataInfo(id);
       await formApi.setValues(record);
     }
 
@@ -68,7 +68,7 @@ async function handleConfirm() {
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? cmddevinfoUpdate(data) : cmddevinfoAdd(data));
+    await (isUpdate.value ? gatewaydataUpdate(data) : gatewaydataAdd(data));
     emit('reload');
     await handleCancel();
   } catch (error) {
@@ -82,7 +82,6 @@ async function handleCancel() {
   drawerApi.close();
   await formApi.resetForm();
 }
-
 </script>
 
 <template>

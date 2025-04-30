@@ -1,16 +1,20 @@
 <script setup lang="ts">
+import {ref} from 'vue';
+
 import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
 
-import {Modal, Space} from 'ant-design-vue';
+import {Space} from 'ant-design-vue';
 
-import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps} from '#/adapter/vxe-table';
+import GatewayStatPage from "#/views/iot/gatewaydataRt/valueStat/index.vue";
 
-import {gatewaydataExport, gatewaydataList, gatewaydataRemove,} from '#/api/iot/gatewaydata';
-import type {GatewaydataForm} from '#/api/iot/gatewaydata/model';
+import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
+
+import {gatewaydataExportRealTime, gatewaydataListRealTime,} from '#/api/iot/gatewaydata';
 import {commonDownloadExcel} from '#/utils/file/download';
 
 import gatewaydataDrawer from './gatewaydata-drawer.vue';
 import {columns, querySchema} from './data';
+import type {GatewaydataVO} from "#/api/iot/gatewaydata/model";
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -50,7 +54,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await gatewaydataList({
+        return await gatewaydataListRealTime({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -65,37 +69,43 @@ const gridOptions: VxeGridProps = {
   id: 'iot-gatewaydata-index'
 };
 
+const curSn=ref()
+const openSnInfo=ref(false)
+const clickSnDisInfo = (sn:string) => {
+  if(sn!=null&&sn.length>0){
+    curSn.value = sn ;
+    openSnInfo.value=true ;
+  }
+};
+
 const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
+  gridEvents: {
+    cellClick: (e) => {
+      const { row } = e;
+      clickSnDisInfo(row.sn);
+    },
+
+  },
 });
 
 const [GatewaydataDrawer, drawerApi] = useVbenDrawer({
   connectedComponent: gatewaydataDrawer,
 });
 
-
-async function handleDelete(row: Required<GatewaydataForm>) {
-  await gatewaydataRemove(row.id);
-  await tableApi.query();
-}
-
-function handleMultiDelete() {
+function handleAddComandInfo(){
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Required<GatewaydataForm>) => row.id);
-  Modal.confirm({
-    title: '提示',
-    okType: 'danger',
-    content: `确认删除选中的${ids.length}条记录吗？`,
-    onOk: async () => {
-      await gatewaydataRemove(ids);
-      await tableApi.query();
-    },
-  });
+  const sns = rows.map((row: GatewaydataVO) => row.sn);
+  if(sns.length>0){
+    const  strSn = sns.join(',');
+    drawerApi.setData({sn:strSn});
+    drawerApi.open();
+  }
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(gatewaydataExport, '网关状态数据', tableApi.formApi.form.values, {
+  commonDownloadExcel(gatewaydataExportRealTime, '网关状态数据', tableApi.formApi.form.values, {
     fieldMappingTime: formOptions.fieldMappingTime,
   });
 }
@@ -107,18 +117,16 @@ function handleDownloadExcel() {
       <template #toolbar-tools>
         <Space>
           <a-button
+            v-access:code="['iot:gatewaydata:list']"
+            @click="handleAddComandInfo"
+          >
+            批量下发指令
+          </a-button>
+          <a-button
             v-access:code="['iot:gatewaydata:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
-          </a-button>
-          <a-button
-            :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
-            type="primary"
-            v-access:code="['iot:gatewaydata:remove']"
-            @click="handleMultiDelete">
-            {{ $t('pages.common.delete') }}
           </a-button>
         </Space>
       </template>
@@ -126,5 +134,6 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <GatewaydataDrawer @reload="tableApi.query()" />
+    <a-drawer   v-model:open="openSnInfo" width="75%" >    <GatewayStatPage  :sn="curSn"  />    </a-drawer>
   </Page>
 </template>
