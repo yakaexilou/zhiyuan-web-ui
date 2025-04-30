@@ -85,3 +85,13 @@ export function valveTemp( val ) {
   else
     return val+"℃";
 }
+export function disD3custom1( val ) {
+  if(val=="01")
+    return "开度";
+  else
+  if(val=="02")
+    return "回温";
+  else
+    return "";
+}
+

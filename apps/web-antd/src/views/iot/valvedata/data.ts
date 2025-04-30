@@ -1,6 +1,6 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import {dianLiangFormat, valveFaWei, valveTemp} from "#/api/iot/gatewaydata";
+import {dianLiangFormat, valveFaWei, valveTemp,disD3custom1} from "#/api/iot/gatewaydata";
 
 
 export const querySchema: FormSchemaGetter = () => [
@@ -86,6 +86,12 @@ export const columns: VxeGridProps['columns'] = [
     width: 80,
   },
   {
+    title: '运行模式',
+    field: 'custom1',
+    width: 80,
+    formatter: ({ cellValue }) => disD3custom1( cellValue ),
+  },
+  {
     title: '瞬时流量',
     field: 'flow',
   },
@@ -124,6 +130,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '备用1',
     field: 'd1custom1',
+    visible: false,
   },
   {
     title: '备用8',
@@ -133,6 +140,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '备用1',
     field: 'custom1',
     width: 80,
+    visible: false,
   },
   {
     title: '备用2',
