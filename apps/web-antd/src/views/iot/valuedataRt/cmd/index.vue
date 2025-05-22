@@ -5,7 +5,7 @@ import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 
 import {cmddevinfoList,} from '#/api/iot/cmddevinfo';
 import {columns} from './data';
-import {defineProps, ref, watch} from "vue";
+import {defineProps, watch} from "vue";
 
 const props = defineProps({
   sn: {

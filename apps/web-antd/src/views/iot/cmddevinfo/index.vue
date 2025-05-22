@@ -1,30 +1,17 @@
 <script setup lang="ts">
-import type { Recordable } from '@vben/types';
+import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
+import {getVxePopupContainer} from '@vben/utils';
 
-import { ref } from 'vue';
+import {Modal, Popconfirm, Space} from 'ant-design-vue';
 
-import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { getVxePopupContainer } from '@vben/utils';
+import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps} from '#/adapter/vxe-table';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
-import dayjs from 'dayjs';
-
-import {
-  useVbenVxeGrid,
-  vxeCheckboxChecked,
-  type VxeGridProps
-} from '#/adapter/vxe-table';
-
-import {
-  cmddevinfoExport,
-  cmddevinfoList,
-  cmddevinfoRemove,
-} from '#/api/iot/cmddevinfo';
-import type { CmddevinfoForm } from '#/api/iot/cmddevinfo/model';
-import { commonDownloadExcel } from '#/utils/file/download';
+import {cmddevinfoExport, cmddevinfoList, cmddevinfoRemove,} from '#/api/iot/cmddevinfo';
+import type {CmddevinfoForm} from '#/api/iot/cmddevinfo/model';
+import {commonDownloadExcel} from '#/utils/file/download';
 
 import cmddevinfoDrawer from './cmddevinfo-drawer.vue';
-import { columns, querySchema } from './data';
+import {columns, querySchema} from './data';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -90,11 +77,6 @@ const [CmddevinfoDrawer, drawerApi] = useVbenDrawer({
 
 function handleAdd() {
   drawerApi.setData({});
-  drawerApi.open();
-}
-
-async function handleEdit(row: Required<CmddevinfoForm>) {
-  drawerApi.setData({ id: row.id });
   drawerApi.open();
 }
 

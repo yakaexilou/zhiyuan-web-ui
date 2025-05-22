@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {defineProps, ref, watch} from 'vue';
 import DataPanel from './data/index.vue';
-import CmdPanel from './cmd/index.vue';
+import CmdPanel from '../cmd/index.vue';
 
 const props = defineProps({
   sn: {

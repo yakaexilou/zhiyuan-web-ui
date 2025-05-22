@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import {computed, ref} from 'vue';
 
-import { useVbenDrawer } from '@vben/common-ui';
-import { $t } from '@vben/locales';
-import { cloneDeep } from '@vben/utils';
+import {useVbenDrawer} from '@vben/common-ui';
+import {$t} from '@vben/locales';
+import {cloneDeep} from '@vben/utils';
 
-import { useVbenForm } from '#/adapter/form';
-import { cmddevinfoAdd, cmddevinfoInfo, cmddevinfoUpdate } from '#/api/iot/cmddevinfo';
+import {useVbenForm} from '#/adapter/form';
+import {cmddevinfoAdd, cmddevinfoInfo, cmddevinfoUpdate} from '#/api/iot/cmddevinfo';
 
-import { drawerSchema } from './data';
-import {getGatewaySelect, getSnCmdInfoSelect} from "#/api/iot/util";
+import {drawerSchema} from './data';
 
 const emit = defineEmits<{ reload: [] }>();
 

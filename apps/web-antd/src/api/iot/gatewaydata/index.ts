@@ -112,4 +112,71 @@ export function disD3custom1( val: string ) {
   else
     return "";
 }
-
+export function disCmdReturnVal( type: string , val: string ) {
+  if(type=="00"){
+    return val ;
+  }else{
+    if(val==null||val==""){
+      return "";
+    }else{
+      if(val=="00")
+        return "成功";
+      else
+        return "异常";
+    }
+  }
+}
+export function disSsll( val: number ) {
+  if(val==null)
+    return "";
+  else{
+    if(val==0){
+      return "0";
+    }else{
+      let rv = Math.round(val * 10000) / 10000;
+      if(rv==0)return "0";
+      return rv+"m³/h";
+    }
+  }
+}
+export function disSsrl( val: number ) {
+  if(val==null)
+    return "";
+  else{
+    if(val==0){
+      return "0";
+    }else{
+      let rv = Math.round(val * 10000) / 10000;
+      if(rv==0)return "0";
+      return rv+"kW/h";
+    }
+  }
+}
+export function disLjll( val: number ) {
+  if(val==null)
+    return "";
+  else{
+    if(val==0){
+      return "0";
+    }else{
+      let rv = Math.round(val * 10000) / 10000;
+      if(rv==0)return "0";
+      // return rv+"m³";
+      return rv;
+    }
+  }
+}
+export function disLjrl( val: number ) {
+  if(val==null)
+    return "";
+  else{
+    if(val==0){
+      return "0";
+    }else{
+      let rv = Math.round(val * 10000) / 10000;
+      if(rv==0)return "0";
+      // return rv+"kWh";
+      return rv;
+    }
+  }
+}

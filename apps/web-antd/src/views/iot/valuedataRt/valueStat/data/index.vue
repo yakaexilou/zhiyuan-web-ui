@@ -4,7 +4,7 @@ import {Page, type VbenFormProps} from '@vben/common-ui';
 import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 
 import {valvedataList,} from '#/api/iot/valvedata';
-import {columns, querySchema} from './data';
+import {columns,columns1,columns2,columns3,columns4,columns5, querySchema} from './data';
 import {defineProps, watch} from "vue";
 
 const props = defineProps({
@@ -13,10 +13,34 @@ const props = defineProps({
     default: '',
   }
 })
+var devType = -1;
 
-watch(() => props.sn, (val) => {
-  tableApi.query( {"sn" : val } );
-});
+function setDevType( sn: String ){
+  if(sn==null||sn=="")devType = -1 ;
+  if(sn.length>10){
+    let tt = sn.substring(8,10);
+    if(tt=="01")devType=1;
+    if(tt=="02")devType=2;
+    if(tt=="03")devType=3;
+    if(tt=="04")devType=4;
+    if(tt=="05")devType=5;
+  }else{
+    devType=-1;
+  }
+
+}
+
+function getColumns(){
+  if(devType==-1){
+    setDevType( props.sn );
+  }
+  if(devType==-1)return columns;
+  if(devType==1)return columns1;
+  if(devType==2)return columns2;
+  if(devType==3)return columns3;
+  if(devType==4)return columns4;
+  if(devType==5)return columns5;
+}
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -31,16 +55,10 @@ const formOptions: VbenFormProps = {
 
 const gridOptions: VxeGridProps = {
   checkboxConfig: {
-    // 高亮
     highlight: true,
-    // 翻页时保留选中状态
     reserve: true,
-    // 点击行选中
-    // trigger: 'row',
   },
-  // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
-  // columns: columns(),
-  columns,
+  columns: getColumns() ,
   height: 'auto',
   keepSource: true,
   pagerConfig: {},
@@ -68,8 +86,13 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   gridOptions,
 });
 
+watch(() => props.sn, (val) => {
+  tableApi.query( {"sn" : val } );
+  setDevType( val );
+  gridOptions.columns=getColumns()
+  tableApi.setGridOptions(gridOptions)
+});
 </script>
-
 <template>
   <Page :auto-content-height="true" class="custom-page">
     <BasicTable table-title="阀门上报数据列表"  class="custom-page">

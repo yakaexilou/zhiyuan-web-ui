@@ -24,6 +24,19 @@ export function cmddevinfoExport(params?: CmddevinfoQuery) {
   return commonExport('/iot/cmddevinfo/export', params ?? {});
 }
 
+export function cmddevinfoListLs(params?: CmddevinfoQuery) {
+  return requestClient.get<PageResult<CmddevinfoVO>>('/iot/cmddevinfo/listLs', { params });
+}
+
+/**
+ * 导出指令信息列表
+ * @param params
+ * @returns 指令信息列表
+ */
+export function cmddevinfoExportLs(params?: CmddevinfoQuery) {
+  return commonExport('/iot/cmddevinfo/exportLs', params ?? {});
+}
+
 /**
  * 查询指令信息详情
  * @param id id

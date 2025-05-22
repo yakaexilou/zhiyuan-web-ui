@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
 
-import { Space} from 'ant-design-vue';
+import {Space} from 'ant-design-vue';
 
 import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 
-import {
-  valvedataExportRealTime,
-  valvedataListRealTime,
-} from '#/api/iot/valvedata';
+import {valvedataExportRealTime, valvedataListRealTime,} from '#/api/iot/valvedata';
 import {commonDownloadExcel} from '#/utils/file/download';
 
 import valvedataDrawer from './valvedata-drawer.vue';
-import {columns, querySchemaRealTime} from './dataStat';
+import {  columns,  columns1,  columns2,  columns3,  columns4,  columns5,  querySchemaRealTime} from './dataStat';
 
 import type {ValvedataVO} from "#/api/iot/valvedata/model";
 
@@ -20,6 +17,26 @@ import ValueStatPage from "#/views/iot/valuedataRt/valueStat/index.vue";
 
 
 import {ref} from "vue";
+import DevTypeTree from "./devType-tree.vue";
+
+const selectDevTypeId = ref<number[]>([]);
+
+let devType = 3;
+
+function getColumns(){
+  if(devType==-1)return columns;
+  if(devType==1)return columns1;
+  if(devType==2)return columns2;
+  if(devType==3)return columns3;
+  if(devType==4)return columns4;
+  if(devType==5)return columns5;
+}
+
+function setColumns( selDevType: number){
+  devType = selDevType;
+  gridOptions.columns=getColumns()
+  tableApi.setGridOptions(gridOptions)
+}
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -34,26 +51,23 @@ const formOptions: VbenFormProps = {
 
 const gridOptions: VxeGridProps = {
   checkboxConfig: {
-    // 高亮
     highlight: true,
-    // 翻页时保留选中状态
     reserve: true,
-    // 点击行选中
-    // trigger: 'row',
   },
-  // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
-  // columns: columns(),
-  columns,
-  width:'auto',
+  columns: getColumns() ,
   height: 'auto',
   keepSource: true,
   pagerConfig: {},
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
+        if (selectDevTypeId.value.length === 1) {
+          setColumns( selectDevTypeId.value[0] );
+        }
         return await valvedataListRealTime({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
+          devType:devType,
           ...formValues,
         });
       },
@@ -111,8 +125,14 @@ function handleDownloadExcel() {
 </script>
 
 <template>
-  <Page :auto-content-height="true">
-    <BasicTable table-title="阀门上报数据列表">
+  <Page :auto-content-height="true" content-class="flex gap-[8px] w-full">
+    <DevTypeTree
+      v-model:select-dev-type-id="selectDevTypeId"
+      class="w-[260px]"
+      @reload="() => tableApi.reload()"
+      @select="() => tableApi.reload()"
+    />
+    <BasicTable table-title="设备上报数据列表" class="w-full" >
       <template #toolbar-tools>
         <Space>
           <a-button

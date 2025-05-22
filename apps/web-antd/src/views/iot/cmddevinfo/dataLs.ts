@@ -27,7 +27,7 @@ export const querySchema: FormSchemaGetter = () => [
       format: 'YYYY-MM-DD HH:mm:ss',
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
     },
-    fieldName: 'addtime',
+    fieldName: 'beTime',
     label: '指令时间',
   },
 ];
@@ -35,16 +35,20 @@ export const querySchema: FormSchemaGetter = () => [
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
-  { type: 'checkbox', width: 60 },
   {
-    title: '',
-    field: 'id',
-    visible: false,
+    title: '创建时间',
+    field: 'addtime',
+    minWidth:150,
   },
   {
     title: '设备序列号',
     field: 'sn',
     minWidth:250,
+  },
+  {
+    title: '回复时间',
+    field: 'returntime',
+    minWidth:150,
   },
   {
     title: '状态',
@@ -89,16 +93,6 @@ export const columns: VxeGridProps['columns'] = [
     minWidth:100,
   },
   {
-    title: '创建时间',
-    field: 'addtime',
-    minWidth:150,
-  },
-  {
-    title: '回复时间',
-    field: 'returntime',
-    minWidth:150,
-  },
-  {
     title: '回复信息',
     field: 'returninfo',
     minWidth:150,
@@ -108,53 +102,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '指令参数信息',
     field: 'cmdparams',
     minWidth:150,
-  },
-  {
-    field: 'action',
-    fixed: 'right',
-    slots: { default: 'action' },
-    title: '操作',
-    width: 120,
-  },
+  }
 ];
 
-export const drawerSchema: FormSchemaGetter = () => [
-
-  // {
-  //   label: '设备序列号',
-  //   fieldName: 'sn',
-  //   component: 'Input',
-  // },
-  {
-    label: '设备序列号',
-    fieldName: 'sn',
-    component: 'Input',
-    defaultValue:'',
-  },
-  {
-    label: '指令编码',
-    fieldName: 'cmdcode',
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions('dev_allcmd_code'),
-    },
-    rules: 'selectRequired',
-    defaultValue:'40',
-  },
-  {
-    label: '读写标识',
-    fieldName: 'type',
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions('cmdtype'),
-    },
-    rules: 'selectRequired',
-    defaultValue:'00',
-  },
-  {
-    label: '指令参数',
-    fieldName: 'cmdparams',
-    component: 'Input',
-    defaultValue:'',
-  },
-];
+export const drawerSchema: FormSchemaGetter = () => [];
