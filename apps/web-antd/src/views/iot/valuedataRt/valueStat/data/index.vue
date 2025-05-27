@@ -3,8 +3,8 @@ import {Page, type VbenFormProps} from '@vben/common-ui';
 
 import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 
-import {valvedataList,} from '#/api/iot/valvedata';
-import {columns,columns1,columns2,columns3,columns4,columns5, querySchema} from './data';
+import {valvedataListOrGw,} from '#/api/iot/valvedata';
+import {columns,columns1,columns2,columns3,columns4,columns5,columns6, querySchema} from './data';
 import {defineProps, watch} from "vue";
 
 const props = defineProps({
@@ -18,12 +18,17 @@ var devType = -1;
 function setDevType( sn: String ){
   if(sn==null||sn=="")devType = -1 ;
   if(sn.length>10){
-    let tt = sn.substring(8,10);
-    if(tt=="01")devType=1;
-    if(tt=="02")devType=2;
-    if(tt=="03")devType=3;
-    if(tt=="04")devType=4;
-    if(tt=="05")devType=5;
+    let tt = sn.substring(0,4);
+    if(tt=="1000"){
+      devType=6;
+    }else{
+      tt = sn.substring(8,10);
+      if(tt=="01")devType=1;
+      if(tt=="02")devType=2;
+      if(tt=="03")devType=3;
+      if(tt=="04")devType=4;
+      if(tt=="05")devType=5;
+    }
   }else{
     devType=-1;
   }
@@ -40,6 +45,7 @@ function getColumns(){
   if(devType==3)return columns3;
   if(devType==4)return columns4;
   if(devType==5)return columns5;
+  if(devType==6)return columns6;
 }
 
 const formOptions: VbenFormProps = {
@@ -65,7 +71,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await valvedataList({
+        return await valvedataListOrGw({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           sn:props.sn,

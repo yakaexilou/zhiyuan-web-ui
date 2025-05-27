@@ -83,10 +83,10 @@ export function dianLiangFormat( val: number ) {
 export function cqsFormat( val: number ) {
   if(val==null) return "";
   if(val===255)return "内网";
-  if (val >= 26) return val+" 极强";
-  else if (val >= 21) return val+" 强";
-  else if (val >= 16) return val+" 中";
-  else if (val >= 6) return val+" 弱";
+  if (val >= 26) return " 强"+val;
+  else if (val >= 21) return " 强  "+val;
+  else if (val >= 16) return " 中  "+val;
+  else if (val >= 6) return " 弱  "+val;
   else return val+" 差";
 }
 export function valveFaWei( val: number ) {

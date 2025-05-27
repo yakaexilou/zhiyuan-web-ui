@@ -1,6 +1,7 @@
 import type {FormSchemaGetter} from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {
+  cqsFormat,
   dianLiangFormat,
   disD3custom1, disLjll, disLjrl,
   disSsll,
@@ -224,40 +225,65 @@ export const columns5: VxeGridProps['columns'] = [
   {    title: '备用7',    field: 'custom7',         minWidth: 40,    visible: false,  },
   {    title: '备用8',    field: 'custom8',         minWidth: 40,    visible: false,  },
 ];
+export const columns6: VxeGridProps['columns'] = [
+  { type: 'checkbox', width: 60 },
+  {    title: 'id',    field: 'id',    visible: false,  },
+  {    title: '设备编码',    field: 'sn',    minWidth: 150,    sortType:"string",    sortable:true,  },
+  {    title: '状态',    field: 'devStat',    width: 60,    slots: {      default: ({ row }) => {        return renderDict(row.devStat, 'dev_stat');      },    },  },
+  {    title: '数据上报时间',    field: 'time',    minWidth: 150,  },
+  {    title: '电池电量',    field: 'batterypower',    formatter: ({ cellValue }) => dianLiangFormat( cellValue ),    minWidth:"150",    sortType:"number",    sortable:true,  },
+  {    title: '信号强度',    field: 'csq',    formatter: ({ cellValue }) => cqsFormat( cellValue ),    minWidth:"150",    sortType:"number",    sortable:true,  },
+  {    title: '通讯ICCID',    field: 'iccid',    minWidth:"150",  },
+];
 
 export const drawerSchema: FormSchemaGetter = () => [
-  {
-    fieldName: 'sn',
-    component: 'hidden',
-    defaultValue:'',
-  },
-  {
-    label: '指令编码',
-    fieldName: 'cmdcode',
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions('cmd_code_key'),
-    },
-    rules: 'selectRequired',
-    defaultValue:'31',
-  },
-  {
-    label: '读写标识',
-    fieldName: 'type',
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions('cmdtype'),
-    },
-    rules: 'selectRequired',
-    defaultValue:'00',
-  },
-  {
-    label: '指令参数',
-    fieldName: 'cmdparams',
-    component: 'Input',
-    defaultValue:'',
-  },
+  {    fieldName: 'sn',    component: 'hidden',    defaultValue:'',  },
+  {    label: '指令编码',    fieldName: 'cmdcode',    component: 'Select',    componentProps: {      options: getDictOptions('cmd_code_key'),    },    rules: 'selectRequired',    defaultValue:'31',  },
+  {    label: '读写标识',    fieldName: 'type',    component: 'Select',    componentProps: {      options: getDictOptions('cmdtype'),    },    rules: 'selectRequired',    defaultValue:'00',  },
+  {    label: '指令参数',    fieldName: 'cmdparams',    component: 'Input',    defaultValue:'',  },
 ];
+
+export const drawerSchema1: FormSchemaGetter = () => [
+  {    fieldName: 'sn',    component: 'hidden',    defaultValue:'',  },
+  {    label: '指令编码1',    fieldName: 'cmdcode',    component: 'Select',    componentProps: {      options: getDictOptions('dev_yl_cmd_code'),    },    rules: 'selectRequired',    defaultValue:'31',  },
+  {    label: '读写标识',    fieldName: 'type',    component: 'Select',    componentProps: {      options: getDictOptions('cmdtype'),    },    rules: 'selectRequired',    defaultValue:'00',  },
+  {    label: '指令参数',    fieldName: 'cmdparams',    component: 'Input',    defaultValue:'',  },
+];
+
+export const drawerSchema2: FormSchemaGetter = () => [
+  {    fieldName: 'sn',    component: 'hidden',    defaultValue:'',  },
+  {    label: '指令编码2',    fieldName: 'cmdcode',    component: 'Select',    componentProps: {      options: getDictOptions('dev_sw_cmd_code'),    },    rules: 'selectRequired',    defaultValue:'31',  },
+  {    label: '读写标识',    fieldName: 'type',    component: 'Select',    componentProps: {      options: getDictOptions('cmdtype'),    },    rules: 'selectRequired',    defaultValue:'00',  },
+  {    label: '指令参数',    fieldName: 'cmdparams',    component: 'Input',    defaultValue:'',  },
+]
+
+export const drawerSchema3: FormSchemaGetter = () => [
+  {    fieldName: 'sn',    component: 'hidden',    defaultValue:'',  },
+  {    label: '指令编码3',    fieldName: 'cmdcode',    component: 'Select',    componentProps: {      options: getDictOptions('dev_fm_cmd_code'),    },    rules: 'selectRequired',    defaultValue:'31',  },
+  {    label: '读写标识',    fieldName: 'type',    component: 'Select',    componentProps: {      options: getDictOptions('cmdtype'),    },    rules: 'selectRequired',    defaultValue:'00',  },
+  {    label: '指令参数',    fieldName: 'cmdparams',    component: 'Input',    defaultValue:'',  },
+]
+
+export const drawerSchema4: FormSchemaGetter = () => [
+  {    fieldName: 'sn',    component: 'hidden',    defaultValue:'',  },
+  {    label: '指令编码4',    fieldName: 'cmdcode',    component: 'Select',    componentProps: {      options: getDictOptions('dev_rb_cmd_code'),    },    rules: 'selectRequired',    defaultValue:'31',  },
+  {    label: '读写标识',    fieldName: 'type',    component: 'Select',    componentProps: {      options: getDictOptions('cmdtype'),    },    rules: 'selectRequired',    defaultValue:'00',  },
+  {    label: '指令参数',    fieldName: 'cmdparams',    component: 'Input',    defaultValue:'',  },
+]
+
+export const drawerSchema5: FormSchemaGetter = () => [
+  {    fieldName: 'sn',    component: 'hidden',    defaultValue:'',  },
+  {    label: '指令编码5',    fieldName: 'cmdcode',    component: 'Select',    componentProps: {      options: getDictOptions('dev_zf_cmd_code'),    },    rules: 'selectRequired',    defaultValue:'16',  },
+  {    label: '读写标识',    fieldName: 'type',    component: 'Select',    componentProps: {      options: getDictOptions('cmdtype'),    },    rules: 'selectRequired',    defaultValue:'00',  },
+  {    label: '指令参数',    fieldName: 'cmdparams',    component: 'Input',    defaultValue:'',  },
+]
+
+export const drawerSchema6: FormSchemaGetter = () => [
+  {    fieldName: 'sn',    component: 'hidden',    defaultValue:'',  },
+  {    label: '指令编码',    fieldName: 'cmdcode',    component: 'Select',    componentProps: {      options: getDictOptions('dev_gw_cmd_code'),    },    rules: 'selectRequired',    defaultValue:'63AA',  },
+  {    label: '读写标识',    fieldName: 'type',    component: 'Select',    componentProps: {      options: getDictOptions('cmdtype'),    },    rules: 'selectRequired',    defaultValue:'00',  },
+  {    label: '指令参数',    fieldName: 'cmdparams',    component: 'Input',    defaultValue:'',  },
+]
 
 export interface DevTypeTree {
   id: number;

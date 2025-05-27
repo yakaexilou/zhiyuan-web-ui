@@ -2,9 +2,14 @@ import type { PageQuery, BaseEntity } from '#/api/common';
 
 export interface CmddevinfoVO {
   /**
-   * 
+   *
    */
   id: string | number;
+
+  /**
+   * 操作ID
+   */
+  actid: string;
 
   /**
    * 设备序列号
@@ -60,7 +65,7 @@ export interface CmddevinfoVO {
 
 export interface CmddevinfoForm extends BaseEntity {
   /**
-   * 
+   *
    */
   id?: string | number;
 

@@ -8,7 +8,14 @@ import { cloneDeep } from '@vben/utils';
 import { useVbenForm } from '#/adapter/form';
 import { valvedataAdd,  valvedataUpdate } from '#/api/iot/valvedata';
 
-import { drawerSchema } from './dataStat';
+import {drawerSchema, drawerSchema1, drawerSchema2, drawerSchema3, drawerSchema4, drawerSchema5, drawerSchema6} from './dataStat';
+import {
+  columns,
+  columns1,
+  columns2,
+  columns3,
+  columns4, columns5, columns6
+} from "#/views/iot/valuedataRt/valueStat/data/data";
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -46,8 +53,9 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       return null;
     }
     drawerApi.drawerLoading(true);
-
     const datas = drawerApi.getData() ;
+    const devTypeVal = datas["devType"];
+    addEditAtts( devTypeVal );
     const snval = datas["sn"];
     if(snval!=null ){
       formApi.setFieldValue('sn', snval );
@@ -55,6 +63,17 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     drawerApi.drawerLoading(false);
   },
 });
+
+
+function addEditAtts( devType: number) {
+  if(devType==-1)formApi.setState({ schema: drawerSchema() });
+  if(devType==1)formApi.setState({ schema: drawerSchema1() });
+  if(devType==2)formApi.setState({ schema: drawerSchema2() });
+  if(devType==3)formApi.setState({ schema: drawerSchema3() });
+  if(devType==4)formApi.setState({ schema: drawerSchema4() });
+  if(devType==5)formApi.setState({ schema: drawerSchema5() });
+  if(devType==6)formApi.setState({ schema: drawerSchema6() });
+}
 
 async function handleConfirm() {
   try {
@@ -79,10 +98,6 @@ async function handleCancel() {
   drawerApi.close();
   await formApi.resetForm();
 }
-
-// function disDevSnInfo(sn:string){
-//   alert(sn);
-// }
 
 </script>
 

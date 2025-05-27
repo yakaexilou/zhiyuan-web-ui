@@ -5,11 +5,10 @@ import {Space} from 'ant-design-vue';
 
 import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
 
-import {valvedataExportRealTime, valvedataListRealTime,} from '#/api/iot/valvedata';
-import {commonDownloadExcel} from '#/utils/file/download';
+import {valvedataListRealTime,} from '#/api/iot/valvedata';
 
 import valvedataDrawer from './valvedata-drawer.vue';
-import {  columns,  columns1,  columns2,  columns3,  columns4,  columns5,  querySchemaRealTime} from './dataStat';
+import {  columns,  columns1,  columns2,  columns3,  columns4,  columns5,columns6,  querySchemaRealTime} from './dataStat';
 
 import type {ValvedataVO} from "#/api/iot/valvedata/model";
 
@@ -30,6 +29,7 @@ function getColumns(){
   if(devType==3)return columns3;
   if(devType==4)return columns4;
   if(devType==5)return columns5;
+  if(devType==6)return columns6;
 }
 
 function setColumns( selDevType: number){
@@ -110,15 +110,10 @@ function handleAddComandInfo(){
   const sns = rows.map((row: ValvedataVO) => row.sn);
   if(sns.length!=0){
     const  strSn = sns.join(',');
-    drawerApi.setData({sn:strSn});
+    const dv = {sn:strSn , devType:devType} ;
+    drawerApi.setData( dv );
     drawerApi.open();
   }
-}
-
-function handleDownloadExcel() {
-  commonDownloadExcel(valvedataExportRealTime, '阀门上报数据数据', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
 }
 
 
@@ -140,12 +135,6 @@ function handleDownloadExcel() {
             @click="handleAddComandInfo"
           >
             批量下发指令
-          </a-button>
-          <a-button
-            v-access:code="['iot:valvedata:export']"
-            @click="handleDownloadExcel"
-          >
-            {{ $t('pages.common.export') }}
           </a-button>
         </Space>
       </template>

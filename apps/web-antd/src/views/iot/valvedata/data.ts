@@ -1,6 +1,7 @@
 import type {FormSchemaGetter} from '#/adapter/form';
 import type {VxeGridProps} from '#/adapter/vxe-table';
 import {
+  cqsFormat,
   dianLiangFormat,
   disD3custom1, disLjll, disLjrl,
   disSsll,
@@ -30,182 +31,40 @@ export const querySchema: FormSchemaGetter = () => [
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
-  {
-    title: '设备SN',
-    field: 'sn',
-    width: 250,
-  },
-  {
-    title: '接收时间',
-    field: 'addtime',
-    width: 150,
-  },
-  {
-    title: '采集时间',
-    field: 'time',
-    width: 150,
-  },
-  {
-    title: '电量',
-    field: 'batterypower',
-    formatter: ({ cellValue }) => dianLiangFormat( cellValue ),
-    minWidth: 80,
-  },
-  {
-    title: '报警',
-    field: 'alarm',
-    minWidth: 80,
-  },
-  {
-    title: '上报周期',
-    field: 'period',
-    minWidth: 80,
-  },
-  {
-    title: '实时阀位',
-    field: 'realposition',
-    minWidth: 80,
-    formatter: ({ cellValue }) => valveFaWei( cellValue ),
-  },
-  {
-    title: '目标阀位',
-    field: 'targetposition',
-    minWidth: 80,
-    formatter: ({ cellValue }) => valveFaWei( cellValue ),
-  },
-  {
-    title: '回温',
-    field: 'returntemp',
-    minWidth: 80,
-    formatter: ({ cellValue }) => valveTemp( cellValue ),
-  },
-  {
-    title: '目标回温',
-    field: 'targetreturntemp',
-    minWidth: 80,
-    formatter: ({ cellValue }) => valveTemp( cellValue ),
-  },
-  {
-    title: '供温',
-    field: 'supplytemp',
-    formatter: ({ cellValue }) => valveTemp( cellValue ),
-    minWidth: 80,
-  },
-  {
-    title: '运行模式',
-    field: 'custom1',
-    minWidth: 80,
-    formatter: ({ cellValue }) => disD3custom1( cellValue ),
-  },
-  {
-    title: '瞬时流量',
-    field: 'flow',
-    visible: false,
-  },
-  {
-    title: '瞬时功率',
-    field: 'power',
-    visible: false,
-  },
-  {
-    title: '累计流量',
-    field: 'flowrecorder',
-    visible: false,
-  },
-  {
-    title: '累计热力',
-    field: 'powerrecorder',
-    visible: false,
-  },
-  {
-    title: '供压',
-    field: 'supplypressure',
-    visible: false,
-  },
-  {
-    title: '回压',
-    field: 'returnpressure',
-    visible: false,
-  },
-  {
-    title: '室温',
-    field: 'roomtemp',
-    visible: false,
-  },
-  {
-    title: '目标室温',
-    field: 'targetroomtemp',
-    visible: false,
-  },
-  {
-    title: '目标流量',
-    field: 'targetflow',
-    visible: false,
-  },
-  {
-    title: '备用1',
-    field: 'd1custom1',
-    visible: false,
-  },
-  {
-    title: '备用8',
-    field: 'd2custom8',
-    visible: false,
-  },
-  {
-    title: '备用2',
-    field: 'custom2',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    title: '备用3',
-    field: 'custom3',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    title: '备用4',
-    field: 'custom4',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    title: '备用5',
-    field: 'custom5',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    title: '备用6',
-    field: 'custom6',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    title: '备用7',
-    field: 'custom7',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    title: '备用8',
-    field: 'custom8',
-    minWidth: 40,
-    visible: false,
-  },
-  {
-    field: 'action',
-    fixed: 'right',
-    slots: { default: 'action' },
-    title: '操作',
-    width: 180,
-    visible: false,
-  },
+  {    title: '设备SN',    field: 'sn',    width: 250,  },
+  {    title: '接收时间',    field: 'addtime',    width: 150,  },
+  {    title: '采集时间',    field: 'time',    width: 150,  },
+  {    title: '电量',    field: 'batterypower',    formatter: ({ cellValue }) => dianLiangFormat( cellValue ),    minWidth: 80,  },
+  {    title: '报警',    field: 'alarm',    minWidth: 80,  },
+  {    title: '上报周期',    field: 'period',    minWidth: 80,  },
+  {    title: '实时阀位',    field: 'realposition',    minWidth: 80,    formatter: ({ cellValue }) => valveFaWei( cellValue ),  },
+  {    title: '目标阀位',    field: 'targetposition',    minWidth: 80,    formatter: ({ cellValue }) => valveFaWei( cellValue ),  },
+  {    title: '回温',    field: 'returntemp',    minWidth: 80,    formatter: ({ cellValue }) => valveTemp( cellValue ),  },
+  {    title: '目标回温',    field: 'targetreturntemp',    minWidth: 80,    formatter: ({ cellValue }) => valveTemp( cellValue ),  },
+  {    title: '供温',    field: 'supplytemp',    formatter: ({ cellValue }) => valveTemp( cellValue ),    minWidth: 80,  },
+  {    title: '运行模式',    field: 'custom1',    minWidth: 80,    formatter: ({ cellValue }) => disD3custom1( cellValue ),  },
+  {    title: '瞬时流量',    field: 'flow',    visible: false,  },
+  {    title: '瞬时功率',    field: 'power',    visible: false,  },
+  {    title: '累计流量',    field: 'flowrecorder',    visible: false,  },
+  {    title: '累计热力',    field: 'powerrecorder',    visible: false,  },
+  {    title: '供压',    field: 'supplypressure',    visible: false,  },
+  {    title: '回压',    field: 'returnpressure',    visible: false,  },
+  {    title: '室温',    field: 'roomtemp',    visible: false,  },
+  {    title: '目标室温',    field: 'targetroomtemp',    visible: false,  },
+  {    title: '目标流量',    field: 'targetflow',    visible: false,  },
+  {    title: '备用1',    field: 'd1custom1',    visible: false,  },
+  {    title: '备用8',    field: 'd2custom8',    visible: false,  },
+  {    title: '备用2',    field: 'custom2',    minWidth: 40,    visible: false,  },
+  {    title: '备用3',    field: 'custom3',    minWidth: 40,    visible: false,  },
+  {    title: '备用4',    field: 'custom4',    minWidth: 40,    visible: false,  },
+  {    title: '备用5',    field: 'custom5',    minWidth: 40,    visible: false,  },
+  {    title: '备用6',    field: 'custom6',    minWidth: 40,    visible: false,  },
+  {    title: '备用7',    field: 'custom7',    minWidth: 40,    visible: false,  },
+  {    title: '备用8',    field: 'custom8',    minWidth: 40,    visible: false,  },
+  {    field: 'action',    fixed: 'right',    slots: { default: 'action' },    title: '操作',    width: 180,    visible: false,  },
 ];
 
 export const columns1: VxeGridProps['columns'] = [
-  {    type: 'checkbox',    width: 60 },
   {    title: '设备SN',     field: 'sn',            width: 250,    sortType:"string",    sortable:true,  },
   {    title: '接收时间',    field: 'addtime',       width: 150,    sortable:true,  },
   {    title: '采集时间',    field: 'time',          width: 150,  },
@@ -239,7 +98,6 @@ export const columns1: VxeGridProps['columns'] = [
 ];
 
 export const columns2: VxeGridProps['columns'] = [
-  {    type: 'checkbox',    width: 60 },
   {    title: '设备SN',     field: 'sn',            width: 250,    sortType:"string",    sortable:true,  },
   {    title: '接收时间',    field: 'addtime',       width: 150,    sortable:true,  },
   {    title: '采集时间',    field: 'time',          width: 150,  },
@@ -273,7 +131,6 @@ export const columns2: VxeGridProps['columns'] = [
 ];
 
 export const columns3: VxeGridProps['columns'] = [
-  {    type: 'checkbox',    width: 60 },
   {    title: '设备SN',     field: 'sn',            width: 250,    sortType:"string",    sortable:true,  },
   {    title: '接收时间',    field: 'addtime',       width: 150,    sortable:true,  },
   {    title: '采集时间',    field: 'time',          width: 150,  },
@@ -289,7 +146,6 @@ export const columns3: VxeGridProps['columns'] = [
 ];
 
 export const columns4: VxeGridProps['columns'] = [
-  {    type: 'checkbox',    width: 60 },
   {    title: '设备SN',     field: 'sn',            width: 250,    sortType:"string",    sortable:true,  },
   {    title: '接收时间',    field: 'addtime',       width: 150,    sortable:true,  },
   {    title: '采集时间',    field: 'time',          width: 150,  },
@@ -319,7 +175,6 @@ export const columns4: VxeGridProps['columns'] = [
   {    title: '备用8',    field: 'custom8',         minWidth: 40,    visible: false,  },
 ];
 export const columns5: VxeGridProps['columns'] = [
-  {    type: 'checkbox',    width: 60 },
   {    title: '设备SN',     field: 'sn',            width: 250,    sortType:"string",    sortable:true,  },
   {    title: '接收时间',    field: 'addtime',       width: 150,    sortable:true,  },
   {    title: '采集时间',    field: 'time',          width: 150,  },
@@ -350,6 +205,14 @@ export const columns5: VxeGridProps['columns'] = [
   {    title: '备用6',    field: 'custom6',         minWidth: 40,    visible: false,  },
   {    title: '备用7',    field: 'custom7',         minWidth: 40,    visible: false,  },
   {    title: '备用8',    field: 'custom8',         minWidth: 40,    visible: false,  },
+];
+export const columns6: VxeGridProps['columns'] = [
+  {    title: 'id',    field: 'id',    visible: false,  },
+  {    title: '设备编码',    field: 'sn',    minWidth: 150,    sortType:"string",    sortable:true,  },
+  {    title: '数据上报时间',    field: 'time',    minWidth: 150,  },
+  {    title: '电池电量',    field: 'batterypower',    formatter: ({ cellValue }) => dianLiangFormat( cellValue ),    minWidth:"150",    sortType:"number",    sortable:true,  },
+  {    title: '信号强度',    field: 'csq',    formatter: ({ cellValue }) => cqsFormat( cellValue ),    minWidth:"150",    sortType:"number",    sortable:true,  },
+  {    title: '通讯ICCID',    field: 'iccid',    minWidth:"150",  },
 ];
 
 export const drawerSchema: FormSchemaGetter = () => [
