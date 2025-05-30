@@ -17,7 +17,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '指令ID',
     field: 'mid',
-    width:150,
+    width:120,
     visible: false,
   },
   {
@@ -29,7 +29,7 @@ export const columns: VxeGridProps['columns'] = [
         return renderDict(row.cmdstat, 'cmdsendstat');
       },
     },
-    minWidth:120,
+    minWidth:100,
   },
   {
     title: '网关序列号',
@@ -39,12 +39,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '创建时间',
     field: 'addtime',
-    minWidth:150,
+    minWidth:140,
   },
   {
     title: '回复时间',
     field: 'returntime',
-    width:150,
+    width:140,
   },
   {
     title: '指令名称',
@@ -70,13 +70,13 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '回复信息',
     field: 'returninfo',
-    minWidth:80,
+    minWidth:180,
     formatter: ({ row }) => disCmdReturnVal( row.type , row.returninfo ),
   },
   {
     title: '指令参数信息',
     field: 'cmdparams',
-    minWidth:80,
+    minWidth:150,
   },
 ];
 

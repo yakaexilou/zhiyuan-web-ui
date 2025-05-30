@@ -1,13 +1,11 @@
-import type { FormSchemaGetter } from '#/adapter/form';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type {FormSchemaGetter} from '#/adapter/form';
+import type {VxeGridProps} from '#/adapter/vxe-table';
 
-import { getDictOptions } from '#/utils/dict';
-import { renderDict } from '#/utils/render';
+import {getDictOptions} from '#/utils/dict';
+import {renderDict} from '#/utils/render';
 
 
-import { getPopupContainer } from '@vben/utils';
-import {driverInfo} from "#/api/iot/driver";
-
+import {getPopupContainer} from '@vben/utils';
 
 
 export const querySchema: FormSchemaGetter = () => [
@@ -42,7 +40,7 @@ export const columns: VxeGridProps['columns'] = [
     slots: {
       default: ({ row }) => {
         // 可选从DictEnum中获取 DictEnum.PRODUCT_TYPE 便于维护
-        return renderDict(row.type, 'product_type');
+        return renderDict(row.type, 'biz_product_type');
       },
     },
     align: 'left',
@@ -56,6 +54,16 @@ export const columns: VxeGridProps['columns'] = [
     title: '驱动协议',
     field: 'driverName',
   },
+  {
+    title: '协议号',
+    field: 'protype',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.protype, 'product_pro_type');
+      },
+    },
+  },
+
   {
     title: '节点类型',
     field: 'nodeType',
@@ -120,7 +128,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Select',
     componentProps: {
       // 可选从DictEnum中获取 DictEnum.PRODUCT_TYPE 便于维护
-      options: getDictOptions('product_type'),
+      options: getDictOptions('biz_product_type'),
     },
   },
   {
@@ -134,6 +142,14 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Select',
     componentProps: {
       getPopupContainer,
+    },
+  },
+  {
+    label: '驱动号',
+    fieldName: 'protype',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions('product_pro_type'),
     },
   },
   {

@@ -12,7 +12,6 @@ import {  columns,  columns1,  columns2,  columns3,  columns4,  columns5,  colum
 
 import {ref} from "vue";
 import DevTypeTree from "../valuedataRt/devType-tree.vue";
-import {gatewaydataList} from "#/api/iot/gatewaydata";
 import {commonDownloadExcel} from "#/utils/file/download";
 
 const selectDevTypeId = ref<number[]>([]);
@@ -20,7 +19,7 @@ const selectDevTypeId = ref<number[]>([]);
 let devType = 3;
 
 function getColumns(){
-  if(devType==-1)return columns;
+  if(devType==0)return columns;
   if(devType==1)return columns1;
   if(devType==2)return columns2;
   if(devType==3)return columns3;

@@ -122,7 +122,10 @@ export function disCmdReturnVal( type: string , val: string ) {
       if(val=="00")
         return "成功";
       else
+      if(val=="01")
         return "异常";
+      else
+        return val ;
     }
   }
 }

@@ -9,13 +9,6 @@ import { useVbenForm } from '#/adapter/form';
 import { valvedataAdd,  valvedataUpdate } from '#/api/iot/valvedata';
 
 import {drawerSchema, drawerSchema1, drawerSchema2, drawerSchema3, drawerSchema4, drawerSchema5, drawerSchema6} from './dataStat';
-import {
-  columns,
-  columns1,
-  columns2,
-  columns3,
-  columns4, columns5, columns6
-} from "#/views/iot/valuedataRt/valueStat/data/data";
 
 const emit = defineEmits<{ reload: [] }>();
 

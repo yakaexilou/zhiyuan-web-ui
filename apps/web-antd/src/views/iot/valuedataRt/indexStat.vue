@@ -23,7 +23,7 @@ const selectDevTypeId = ref<number[]>([]);
 let devType = 3;
 
 function getColumns(){
-  if(devType==-1)return columns;
+  if(devType==0)return columns;
   if(devType==1)return columns1;
   if(devType==2)return columns2;
   if(devType==3)return columns3;
@@ -97,7 +97,6 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
       const { row } = e;
       clickSnDisInfo(row.sn);
     },
-
   },
 });
 

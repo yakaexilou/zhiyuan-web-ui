@@ -45,25 +45,16 @@ export function valvedataExport(params?: ValvedataQuery) {
 export function valvedataListOrGw(params?: ValvedataQuery) {
   let sn = params?.["sn"] ;
   let devType: number|undefined  = params?.["devType"] ;
-  console.log("sn:"+sn );
-  console.log("devType:"+devType );
-  console.log("exe :  1" );
   if(devType==null){
-    console.log("exe :  2" );
     if((sn!=null)&&( sn.startsWith("1000") )) {
-      console.log("exe :  3" );
       return requestClient.get<PageResult<GatewaydataVO>>('/iot/gatewaydata/list', { params });
     }else{
-      console.log("exe :  4" );
       return requestClient.get<PageResult<ValvedataVO>>('/iot/valvedata/list', { params });
     }
   }else{
-    console.log("exe :  11" );
     if(devType==6){
-      console.log("exe :  12" );
       return requestClient.get<PageResult<GatewaydataVO>>('/iot/gatewaydata/list', { params });
     }else{
-      console.log("exe :  13" );
       return requestClient.get<PageResult<ValvedataVO>>('/iot/valvedata/list', { params });
     }
   }
@@ -137,6 +128,12 @@ export function valvedataInfo(id: ID) {
  * @returns void
  */
 export function valvedataAdd(data: CmddevinfoForm) {
+  let cmdcode = data["cmdcode"];
+  let cmdparams = data["cmdparams"];
+  if(cmdcode=="63A0"&&cmdparams==""){
+    alert("请选择波特率");
+    return ;
+  }
   return requestClient.postWithMsg<void>('/iot/cmddevinfo/addCmd', data);
 }
 

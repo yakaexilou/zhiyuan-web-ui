@@ -39,12 +39,13 @@ function getDevTypeTree(){
     "weight": 0,
     "disabled": false,
     "children": [
-      {	"id": 1, "parentId": 100, "label": "压力设备","weight": 1,	"disabled": false,},
-      {	"id": 2, "parentId": 100, "label": "室温采集器",	"weight": 2,"disabled": false,},
-      {	"id": 3, "parentId": 100, "label": "阀门设备",	"weight": 2,"disabled": false,},
-      {	"id": 4, "parentId": 100, "label": "热表设备",	"weight": 2,"disabled": false,},
-      {	"id": 5, "parentId": 100, "label": "站房控制柜",	"weight": 2,"disabled": false,},
-      {	"id": 6, "parentId": 100, "label": "网关设备",	"weight": 2,"disabled": false,},
+      {	"id": 1, "parentId": 100, "label": "电动执行器","weight": 1,	"disabled": false,},
+      {	"id": 2, "parentId": 100, "label": "热量表",	"weight": 2,"disabled": false,},
+      {	"id": 3, "parentId": 100, "label": "采集箱",	"weight": 2,"disabled": false,},
+      {	"id": 4, "parentId": 100, "label": "室温采集器",	"weight": 2,"disabled": false,},
+      {	"id": 5, "parentId": 100, "label": "阀门设备",	"weight": 2,"disabled": false,},
+      {	"id": 6, "parentId": 100, "label": "压差设备",	"weight": 2,"disabled": false,},
+      {	"id": 0, "parentId": 100, "label": "未知设备",	"weight": 2,"disabled": false,},
     ]
   }];
 }

@@ -5,7 +5,7 @@ import { ref } from 'vue';
  * '/iot/driver/list'
  *  url 引用 对象翻页的 list
  * */
-export function getDmList( url ,  params) {
+export function getDmList( url: string ,  params) {
   return requestClient.get( url , { params } );
 }
 
@@ -15,28 +15,28 @@ export async function getProductAtt( productId ){
 }
 
 
-export function getGatewaySelect( attName , iPageNum , iPageSize ){
-  return updateSelect( "/iot/gateway/list" , attName , iPageNum , iPageSize );
+export function getGatewaySelect( attName: string , iPageNum: number , iPageSize: number ){
+  return updateSelect( "/iot/device/gatewaylist" , attName , iPageNum , iPageSize );
 }
 
-export function getProductSelect( attName , iPageNum , iPageSize ){
+export function getProductSelect( attName: string , iPageNum: number , iPageSize: number ){
   return updateSelect( "/iot/product/list" , attName , iPageNum , iPageSize );
 }
 
-export function getSnValveSelect( attName ){
+export function getSnValveSelect( attName: string ){
   return updateSelectSn( "/iot/valvedata/listsn" , attName );
 }
 
-export function getSnGatewaySelect( attName ){
+export function getSnGatewaySelect( attName: string ){
   return updateSelectSn( "/iot/gatewaydata/listsn" , attName );
 }
 
-export function getSnCmdInfoSelect( attName ){
+export function getSnCmdInfoSelect( attName: string ){
   return updateSelectSn( "/iot/cmddevinfo/listsn" , attName );
 }
 
 
-export function updateSelectSn( url , attName ){
+export function updateSelectSn( url: string , attName: string ){
   const options = ref([]);
   fetchSel('');
   async function fetchSel( val:string ){
