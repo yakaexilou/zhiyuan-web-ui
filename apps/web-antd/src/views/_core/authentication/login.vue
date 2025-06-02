@@ -69,7 +69,7 @@ const formSchema = computed((): VbenFormSchema[] => {
         })),
         placeholder: $t('authentication.selectAccount'),
       },
-      defaultValue: '000000',
+      defaultValue: '',
       dependencies: {
         if: () => tenantInfo.value.tenantEnabled,
         // 这里大致上是watch的一个效果
@@ -157,7 +157,7 @@ async function handleAccountLogin(values: LoginAndRegisterParams) {
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
     :show-register="false"
-    :show-third-party-login="true"
+    :show-third-party-login="false"
     @submit="handleAccountLogin"
   >
     <!-- 可通过show-third-party-login控制是否显示第三方登录 -->

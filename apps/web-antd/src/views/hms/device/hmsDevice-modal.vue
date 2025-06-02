@@ -1,22 +1,28 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { useVbenDrawer } from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { areaAdd, areaInfo, areaUpdate } from '#/api/hms/area';
-import { stationList } from '#/api/hms/station';
+import { areaList } from '#/api/hms/area/index.ts';
+import {
+  hmsDeviceAdd,
+  hmsDeviceInfo,
+  hmsDeviceUpdate,
+} from '#/api/hms/hmsDevice/index.ts';
 
-import { drawerSchema } from './data';
+import { modalSchema } from './data';
+import {getGatewaySelect, getProductSelect} from "#/api/iot/util";
 
 const emit = defineEmits<{ reload: [] }>();
-const categories = ['area', 'build', 'unit', 'room'];
-const isUpdate = ref(false);
-const bodyTitle = ref('');
 
-const stationId = ref('stationId');
+const isUpdate = ref(false);
+const title = computed(() => {
+  return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
+});
+
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     // 默认占满两列
@@ -28,16 +34,21 @@ const [BasicForm, formApi] = useVbenForm({
       class: 'w-full',
     },
   },
-  schema: drawerSchema(),
+  schema: modalSchema(),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
-async function setUpAreaList() {
+const setUpStation = async ({ area, station }) => {
   const options = ref();
   async function fetch(val: string) {
-    const stationListMap = await stationList({ name: val });
+    const stationListMap = await areaList({
+      name: val,
+      pageSize: 20,
+      orderByColumn: 'fullAddress',
+      idSeq: area?.idSeq,
+    });
     options.value = stationListMap.rows.map((item) => ({
-      label: `${item.name}[${item.code}]`,
+      label: `${item.fullAddress}[${item.code}]`,
       value: item.id,
     }));
   }
@@ -53,13 +64,20 @@ async function setUpAreaList() {
           await fetch(val);
         },
       },
-      fieldName: `${stationId.value}`,
+      fieldName: 'areaId',
     },
   ]);
+};
+async function setProductSelectList() {
+  formApi.updateSchema(getProductSelect('productId', 1, 50));
 }
-const [BasicDrawer, drawerApi] = useVbenDrawer({
+async function setGatewaySelectList() {
+  formApi.updateSchema(getGatewaySelect('gatewayId', 1, 50));
+}
+const [BasicModal, modalApi] = useVbenModal({
   // 在这里更改宽度
-  class: 'w-[60%]',
+  class: 'w-[550px]',
+  fullscreenButton: false,
   // 点击遮罩是否关闭
   closeOnClickModal: false,
   onCancel: handleCancel,
@@ -68,66 +86,52 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     if (!isOpen) {
       return null;
     }
-    drawerApi.drawerLoading(true);
-    await setUpAreaList();
-    const { id } = drawerApi.getData() as { id?: number | string };
-    const { category, title, pid } = drawerApi.getData();
-    isUpdate.value = !!id;
-    bodyTitle.value = title;
-    if (isUpdate.value && id) {
-      const record = await areaInfo(id);
-      await formApi.setValues(record);
-    } else {
-      const dept = { deptId: null, parentId: null };
-      if (category === 'station') {
-        dept.deptId = pid;
-      }
-      if (category === 'area' || category === 'build' || category === 'unit') {
-        dept.parentId = pid;
-      }
-      await formApi.setValues({
-        category: categories[categories.indexOf(category) + 1],
-        ...dept,
-      });
-    }
+    modalApi.modalLoading(true);
 
-    drawerApi.drawerLoading(false);
+    const { id, area, station } = modalApi.getData() as {
+      area?: object;
+      id?: number | string;
+      station?: object;
+    };
+    isUpdate.value = !!id;
+    await setUpStation({ area, station });
+    setProductSelectList();
+    setGatewaySelectList();
+    if (isUpdate.value && id) {
+      const record = await hmsDeviceInfo(id);
+      await formApi.setValues(record);
+    }
+    modalApi.modalLoading(false);
   },
 });
 
 async function handleConfirm() {
   try {
-    drawerApi.drawerLoading(true);
+    modalApi.modalLoading(true);
     const { valid } = await formApi.validate();
     if (!valid) {
       return;
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? areaUpdate(data) : areaAdd(data));
+    await (isUpdate.value ? hmsDeviceUpdate(data) : hmsDeviceAdd(data));
     emit('reload');
     await handleCancel();
   } catch (error) {
     console.error(error);
   } finally {
-    drawerApi.drawerLoading(false);
+    modalApi.modalLoading(false);
   }
 }
 
 async function handleCancel() {
-  drawerApi.close();
+  modalApi.close();
   await formApi.resetForm();
 }
-const title = computed(() => {
-  return (
-    (isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add')) +
-    bodyTitle.value
-  );
-});
 </script>
 
 <template>
-  <BasicDrawer :title="title" class="w-[600px]">
+  <BasicModal :title="title">
     <BasicForm />
-  </BasicDrawer>
+  </BasicModal>
 </template>

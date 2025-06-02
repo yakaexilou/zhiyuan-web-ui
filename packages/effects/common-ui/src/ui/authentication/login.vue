@@ -28,12 +28,12 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   qrCodeLoginPath: '/auth/qrcode-login',
   registerPath: '/auth/register',
-  showCodeLogin: true,
+  showCodeLogin: false,
   showForgetPassword: true,
-  showQrcodeLogin: true,
-  showRegister: true,
+  showQrcodeLogin: false,
+  showRegister: false,
   showRememberMe: true,
-  showThirdPartyLogin: true,
+  showThirdPartyLogin: false,
   submitButtonText: '',
   subTitle: '',
   title: '',
@@ -95,7 +95,7 @@ defineExpose({
     <slot name="title">
       <Title>
         <slot name="title">
-          {{ title || `${$t('authentication.welcomeBack')} 👋🏻` }}
+          {{ title || `${$t('authentication.welcomeBack')} ` }}
         </slot>
         <template #desc>
           <span class="text-muted-foreground">

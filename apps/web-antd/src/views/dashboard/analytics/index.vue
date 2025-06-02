@@ -23,29 +23,29 @@ import AnalyticsVisitsSource from './analytics-visits-source.vue';
 const overviewItems: AnalysisOverviewItem[] = [
   {
     icon: SvgCardIcon,
-    title: '用户量',
-    totalTitle: '总用户量',
+    title: '在线网关',
+    totalTitle: '总网关',
     totalValue: 120_000,
     value: 2000,
   },
   {
     icon: SvgCakeIcon,
-    title: '访问量',
-    totalTitle: '总访问量',
+    title: '在线阀门',
+    totalTitle: '总阀门',
     totalValue: 500_000,
     value: 20_000,
   },
   {
     icon: SvgDownloadIcon,
-    title: '下载量',
-    totalTitle: '总下载量',
+    title: '在线热表',
+    totalTitle: '总热表',
     totalValue: 120_000,
     value: 8000,
   },
   {
     icon: SvgBellIcon,
-    title: '使用量',
-    totalTitle: '总使用量',
+    title: '在线室温',
+    totalTitle: '总室温',
     totalValue: 50_000,
     value: 5000,
   },
@@ -53,11 +53,11 @@ const overviewItems: AnalysisOverviewItem[] = [
 
 const chartTabs: TabOption[] = [
   {
-    label: '流量趋势',
+    label: '回水温度分布',
     value: 'trends',
   },
   {
-    label: '月访问量',
+    label: '阀门开度分布',
     value: 'visits',
   },
 ];

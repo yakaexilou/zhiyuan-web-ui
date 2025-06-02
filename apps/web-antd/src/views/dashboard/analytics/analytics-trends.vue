@@ -30,18 +30,18 @@ onMounted(() => {
         smooth: true,
         type: 'line',
       },
-      {
-        areaStyle: {},
-        data: [
-          33, 66, 88, 333, 3333, 6200, 20_000, 3000, 1200, 13_000, 22_000,
-          11_000, 2221, 1201, 390, 198, 60, 30, 22, 11,
-        ],
-        itemStyle: {
-          color: '#019680',
-        },
-        smooth: true,
-        type: 'line',
-      },
+      // {
+      //   areaStyle: {},
+      //   data: [
+      //     33, 66, 88, 333, 3333, 6200, 20_000, 3000, 1200, 13_000, 22_000,
+      //     11_000, 2221, 1201, 390, 198, 60, 30, 22, 11,
+      //   ],
+      //   itemStyle: {
+      //     color: '#019680',
+      //   },
+      //   smooth: true,
+      //   type: 'line',
+      // },
     ],
     tooltip: {
       axisPointer: {
@@ -65,7 +65,7 @@ onMounted(() => {
         show: false,
       },
       boundaryGap: false,
-      data: Array.from({ length: 18 }).map((_item, index) => `${index + 6}:00`),
+      data: Array.from({ length: 18 }).map((_item, index) => `${index + 14}℃`),
       splitLine: {
         lineStyle: {
           type: 'solid',

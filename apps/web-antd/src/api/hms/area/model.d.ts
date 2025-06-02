@@ -85,6 +85,9 @@ export interface AreaVO {
    * 描述
    */
   description: string;
+
+  fullAddress: string;
+  idSeq: string;
 }
 
 export interface AreaForm extends BaseEntity {
@@ -126,7 +129,7 @@ export interface AreaForm extends BaseEntity {
   /**
    * 类型（小区，楼栋，单元，户，组，）
    */
-  category?: number;
+  category?: string;
 
   /**
    * 所属上级
@@ -208,7 +211,7 @@ export interface AreaQuery extends PageQuery {
   /**
    * 类型（小区，楼栋，单元，户，组，）
    */
-  category?: number;
+  category?: string;
 
   /**
    * 所属上级

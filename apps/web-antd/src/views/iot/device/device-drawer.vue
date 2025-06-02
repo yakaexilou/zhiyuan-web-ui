@@ -7,15 +7,16 @@ import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 import { deviceAdd, deviceInfo, deviceUpdate } from '#/api/iot/device';
-
-import { drawerSchema } from './data';
 import {
   getAttDefValues,
   getAttNewSchema,
-  getAttSchema, getGatewaySelect,
+  getAttSchema,
+  getGatewaySelect,
   getProductAtt,
   getProductSelect,
-} from "#/api/iot/util";
+} from '#/api/iot/util';
+
+import { drawerSchema } from './data';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -33,7 +34,7 @@ const [BasicForm, formApi] = useVbenForm({
     // 通用配置项 会影响到所有表单项
     componentProps: {
       class: 'w-full',
-    }
+    },
   },
   schema: drawerSchema(),
   showDefaultActions: false,
@@ -57,48 +58,46 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     setGatewaySelectList();
     const { id } = drawerApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
-    let productId = null ;
-    let attributes = null ;
+    let productId = null;
+    let attributes = null;
     if (isUpdate.value && id) {
       const record = await deviceInfo(id);
-      productId = record["productId"] ;
-      attributes = record["attributes"] ;
+      productId = record.productId;
+      attributes = record.attributes;
       await formApi.setValues(record);
     }
-    addDevAtts( productId , attributes );
-    const attDefValues = getAttDefValues( attributes ) ;
-    for( let key in attDefValues ){
-      formApi.setFieldValue(key , attDefValues[key] );
+    addDevAtts(productId, attributes);
+    const attDefValues = getAttDefValues(attributes);
+    for (const key in attDefValues) {
+      formApi.setFieldValue(key, attDefValues[key]);
     }
     drawerApi.drawerLoading(false);
   },
 });
 
-function addDevAtts( productId , attributes  ) {
-  getProductAtt(productId).then((atts)=>{
-    if(atts==null)return ;
-    if(atts.total==0)return ;
+function addDevAtts(productId, attributes) {
+  getProductAtt(productId).then((atts) => {
+    if (atts == null) return;
+    if (atts.total == 0) return;
     formApi.setState((prev) => {
       const currentSchema = prev?.schema ?? [];
       const newSchema = [];
-      atts.rows.forEach((att)=>{
-        let schema = getAttSchema(att) ;
-        if(schema!=null)
-        newSchema.push(schema);
+      atts.rows.forEach((att) => {
+        const schema = getAttSchema(att);
+        if (schema != null) newSchema.push(schema);
       });
-      const attDefValues = getAttDefValues( attributes ) ;
-      const ns = getAttNewSchema(currentSchema ,newSchema ,attDefValues ) ;
+      const attDefValues = getAttDefValues(attributes);
+      const ns = getAttNewSchema(currentSchema, newSchema, attDefValues);
       return { schema: ns };
-    })
+    });
   });
-
 }
 
 async function setProductSelectList() {
-  formApi.updateSchema( getProductSelect( 'productId' , 1,50 ) );
+  formApi.updateSchema(getProductSelect('productId', 1, 50));
 }
 async function setGatewaySelectList() {
-  formApi.updateSchema( getGatewaySelect( 'gatewayId' , 1,50 ) );
+  formApi.updateSchema(getGatewaySelect('gatewayId', 1, 50));
 }
 
 async function handleConfirm() {
@@ -110,24 +109,24 @@ async function handleConfirm() {
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    if(true){
+    if (true) {
       const attributes = [];
-      for( let key in data ){
-        if(key.indexOf("d_a_")==0){
+      for (const key in data) {
+        if (key.indexOf('d_a_') == 0) {
           const value = data[key];
-          const nkey = key.substring(4);
-          const kv = { "key":nkey };
-          kv[nkey] = value ;
-          if(nkey!="test"){
-            attributes.push( kv );
+          const nkey = key.slice(4);
+          const kv = { key: nkey };
+          kv[nkey] = value;
+          if (nkey != 'test') {
+            attributes.push(kv);
           }
         }
       }
-      for( let key in attributes ){
-        const k = "d_a_"+key ;
+      for (const key in attributes) {
+        const k = `d_a_${key}`;
         delete data[k];
       }
-      data["attributes"] = JSON.stringify(attributes);
+      data.attributes = JSON.stringify(attributes);
     }
     await (isUpdate.value ? deviceUpdate(data) : deviceAdd(data));
     emit('reload');
@@ -150,4 +149,3 @@ async function handleCancel() {
     <BasicForm />
   </BasicDrawer>
 </template>
-
