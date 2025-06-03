@@ -1,51 +1,46 @@
 <script setup lang="ts">
-import {Page, type VbenFormProps} from '@vben/common-ui';
+import type { VbenFormProps } from '@vben/common-ui';
 
-import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import {valvedataListOrGw,} from '#/api/iot/valvedata';
-import {columns,columns1,columns2,columns3,columns4,columns5,columns6, querySchema} from './data';
-import {defineProps, watch} from "vue";
+import { defineProps, watch } from 'vue';
+
+import { Page } from '@vben/common-ui';
+
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { valvedataListOrGw } from '#/api/iot/valvedata';
+
+import {
+  columns,
+  columns1,
+  columns2,
+  columns3,
+  columns4,
+  columns5,
+} from '../../../valvedata/data';
+import { querySchema } from './data';
 
 const props = defineProps({
   sn: {
     type: String,
     default: '',
-  }
-})
-var devType = -1;
+  },
+  devType: {
+    type: String,
+    default: '',
+  },
+});
 
-function setDevType( sn: String ){
-  if(sn==null||sn=="")devType = -1 ;
-  if(sn.length>10){
-    let tt = sn.substring(0,4);
-    if(tt=="1000"){
-      devType=6;
-    }else{
-      tt = sn.substring(8,10);
-      if(tt=="01")devType=1;
-      if(tt=="02")devType=2;
-      if(tt=="03")devType=3;
-      if(tt=="04")devType=4;
-      if(tt=="05")devType=5;
-    }
-  }else{
-    devType=-1;
-  }
+let iDevType = 0;
 
-}
-
-function getColumns(){
-  if(devType==-1){
-    setDevType( props.sn );
-  }
-  if(devType==-1)return columns;
-  if(devType==1)return columns1;
-  if(devType==2)return columns2;
-  if(devType==3)return columns3;
-  if(devType==4)return columns4;
-  if(devType==5)return columns5;
-  if(devType==6)return columns6;
+function getColumns() {
+  iDevType = Number.parseInt(props.devType);
+  if (iDevType == 0) return columns;
+  if (iDevType == 1) return columns1;
+  if (iDevType == 2) return columns2;
+  if (iDevType == 3) return columns3;
+  if (iDevType == 4) return columns4;
+  if (iDevType == 5) return columns5;
 }
 
 const formOptions: VbenFormProps = {
@@ -64,7 +59,7 @@ const gridOptions: VxeGridProps = {
     highlight: true,
     reserve: true,
   },
-  columns: getColumns() ,
+  columns: getColumns(),
   height: 'auto',
   keepSource: true,
   pagerConfig: {},
@@ -74,7 +69,8 @@ const gridOptions: VxeGridProps = {
         return await valvedataListOrGw({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
-          sn:props.sn,
+          sn: props.sn,
+          devType: iDevType,
           ...formValues,
         });
       },
@@ -84,7 +80,7 @@ const gridOptions: VxeGridProps = {
     keyField: 'id',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'iot-valvedata-index'
+  id: 'iot-valvedata-index',
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -92,16 +88,16 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   gridOptions,
 });
 
-watch(() => props.sn, (val) => {
-  tableApi.query( {"sn" : val } );
-  setDevType( val );
-  gridOptions.columns=getColumns()
-  tableApi.setGridOptions(gridOptions)
+watch([() => props.sn, () => props.devType], ([sn, dt]) => {
+  iDevType = Number.parseInt(dt);
+  gridOptions.columns = getColumns();
+  tableApi.setGridOptions(gridOptions);
+  tableApi.query({ sn, devType: iDevType });
 });
 </script>
 <template>
   <Page :auto-content-height="true" class="custom-page">
-    <BasicTable table-title="阀门上报数据列表"  class="custom-page">
+    <BasicTable table-title="阀门上报数据列表" class="custom-page">
       <template #action="{ row }" :scroll="{ y: 'calc(100vh - 180px)' }">
       </template>
     </BasicTable>

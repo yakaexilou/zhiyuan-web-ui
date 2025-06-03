@@ -1,40 +1,49 @@
 <script setup lang="ts">
-import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
+import type { VbenFormProps } from '@vben/common-ui';
 
-import {Space} from 'ant-design-vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import {useVbenVxeGrid, type VxeGridProps} from '#/adapter/vxe-table';
+import { ref } from 'vue';
 
-import {valvedataExport, valvedataListOrGw} from '#/api/iot/valvedata';
+import { Page, useVbenDrawer } from '@vben/common-ui';
 
+import { Space } from 'ant-design-vue';
+
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { valvedataExport, valvedataListOrGw } from '#/api/iot/valvedata';
+import { commonDownloadExcel } from '#/utils/file/download';
+
+import DevTypeTree from '../valuedataRt/devType-tree.vue';
+import {
+  columns,
+  columns1,
+  columns2,
+  columns3,
+  columns4,
+  columns5,
+  querySchema,
+} from './data';
 import valvedataDrawer from './valvedata-drawer.vue';
-import {  columns,  columns1,  columns2,  columns3,  columns4,  columns5,  columns6,  querySchema} from './data';
-
-import {ref} from "vue";
-import DevTypeTree from "../valuedataRt/devType-tree.vue";
-import {commonDownloadExcel} from "#/utils/file/download";
 
 const selectDevTypeId = ref<number[]>([]);
 
 let devType = 3;
 
-function getColumns(){
-  if(devType==0)return columns;
-  if(devType==1)return columns1;
-  if(devType==2)return columns2;
-  if(devType==3)return columns3;
-  if(devType==4)return columns4;
-  if(devType==5)return columns5;
-  if(devType==6)return columns6;
+function getColumns() {
+  if (devType == 0) return columns;
+  if (devType == 1) return columns1;
+  if (devType == 2) return columns2;
+  if (devType == 3) return columns3;
+  if (devType == 4) return columns4;
+  if (devType == 5) return columns5;
 }
 
-function setColumns( selDevType: number){
+function setColumns(selDevType: number) {
   devType = selDevType;
-  gridOptions.columns=getColumns()
-  tableApi.setGridOptions(gridOptions)
-  tableApi.formApi.form.setFieldValue("devType", devType );
+  gridOptions.columns = getColumns();
+  tableApi.setGridOptions(gridOptions);
+  tableApi.formApi.form.setFieldValue('devType', devType);
 }
-
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -60,25 +69,22 @@ const gridOptions: VxeGridProps = {
     ajax: {
       query: async ({ page }, formValues = {}) => {
         if (selectDevTypeId.value.length === 1) {
-          setColumns( selectDevTypeId.value[0] );
+          setColumns(selectDevTypeId.value[0]);
           devType = selectDevTypeId.value[0];
         }
-        if(devType==6){
-          return await valvedataListOrGw({
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-            devType:devType,
-            ...formValues,
-          });
-        }else{
-          return await valvedataListOrGw({
-            pageNum: page.currentPage,
-            pageSize: page.pageSize,
-            devType:devType,
-            ...formValues,
-          });
-        }
-
+        return await (devType == 6
+          ? valvedataListOrGw({
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+              devType,
+              ...formValues,
+            })
+          : valvedataListOrGw({
+              pageNum: page.currentPage,
+              pageSize: page.pageSize,
+              devType,
+              ...formValues,
+            }));
       },
     },
   },
@@ -86,7 +92,7 @@ const gridOptions: VxeGridProps = {
     keyField: 'id',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'iot-valvedata-index'
+  id: 'iot-valvedata-index',
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -99,12 +105,15 @@ const [ValvedataDrawer, drawerApi] = useVbenDrawer({
 });
 
 function handleDownloadExcel() {
-  //tableApi.formApi.form.setFieldValue("devType", devType );
-  //var params = {devType:devType};
-  commonDownloadExcel(valvedataExport, '设备上报数据导出', tableApi.formApi.form.values, {fieldMappingTime: formOptions.fieldMappingTime,});
-
+  // tableApi.formApi.form.setFieldValue("devType", devType );
+  // var params = {devType:devType};
+  commonDownloadExcel(
+    valvedataExport,
+    '设备上报数据导出',
+    tableApi.formApi.form.values,
+    { fieldMappingTime: formOptions.fieldMappingTime },
+  );
 }
-
 </script>
 
 <template>
@@ -117,10 +126,17 @@ function handleDownloadExcel() {
     />
     <BasicTable table-title="设备上报数据列表">
       <template #toolbar-tools>
-        <Space><a-button v-access:code="['iot:valvedata:export']"  @click="handleDownloadExcel" > {{ $t('pages.common.export') }} </a-button></Space>
+        <Space>
+          <a-button
+            v-access:code="['iot:valvedata:export']"
+            @click="handleDownloadExcel"
+          >
+            {{ $t('pages.common.export') }}
+          </a-button>
+        </Space>
       </template>
       <template #action="{ row }">
-        <Space></Space>
+        <Space />
       </template>
     </BasicTable>
     <ValvedataDrawer @reload="tableApi.query()" />

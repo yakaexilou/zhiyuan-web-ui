@@ -6,9 +6,15 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { valvedataAdd,  valvedataUpdate } from '#/api/iot/valvedata';
+import { valvedataAdd, valvedataUpdate } from '#/api/iot/valvedata';
 
-import {drawerSchema, drawerSchema1, drawerSchema2, drawerSchema3, drawerSchema4, drawerSchema5, drawerSchema6} from './dataStat';
+import {
+  drawerSchema1,
+  drawerSchema2,
+  drawerSchema3,
+  drawerSchema4,
+  drawerSchema5,
+} from './dataStat';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -26,9 +32,9 @@ const [BasicForm, formApi] = useVbenForm({
     // 通用配置项 会影响到所有表单项
     componentProps: {
       class: 'w-full',
-    }
+    },
   },
-  schema: drawerSchema(),
+  schema: drawerSchema1(),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
@@ -46,26 +52,23 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       return null;
     }
     drawerApi.drawerLoading(true);
-    const datas = drawerApi.getData() ;
-    const devTypeVal = datas["devType"];
-    addEditAtts( devTypeVal );
-    const snval = datas["sn"];
-    if(snval!=null ){
-      formApi.setFieldValue('sn', snval );
+    const datas = drawerApi.getData();
+    const devTypeVal = datas.devType;
+    addEditAtts(devTypeVal);
+    const snval = datas.sn;
+    if (snval != null) {
+      formApi.setFieldValue('sn', snval);
     }
     drawerApi.drawerLoading(false);
   },
 });
 
-
-function addEditAtts( devType: number) {
-  if(devType==-1)formApi.setState({ schema: drawerSchema() });
-  if(devType==1)formApi.setState({ schema: drawerSchema1() });
-  if(devType==2)formApi.setState({ schema: drawerSchema2() });
-  if(devType==3)formApi.setState({ schema: drawerSchema3() });
-  if(devType==4)formApi.setState({ schema: drawerSchema4() });
-  if(devType==5)formApi.setState({ schema: drawerSchema5() });
-  if(devType==6)formApi.setState({ schema: drawerSchema6() });
+function addEditAtts(devType: number) {
+  if (devType == 1) formApi.setState({ schema: drawerSchema1() });
+  if (devType == 2) formApi.setState({ schema: drawerSchema2() });
+  if (devType == 3) formApi.setState({ schema: drawerSchema3() });
+  if (devType == 4) formApi.setState({ schema: drawerSchema4() });
+  if (devType == 5) formApi.setState({ schema: drawerSchema5() });
 }
 
 async function handleConfirm() {
@@ -91,7 +94,6 @@ async function handleCancel() {
   drawerApi.close();
   await formApi.resetForm();
 }
-
 </script>
 
 <template>
@@ -99,4 +101,3 @@ async function handleCancel() {
     <BasicForm />
   </BasicDrawer>
 </template>
-
