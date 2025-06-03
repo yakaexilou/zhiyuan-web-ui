@@ -5,11 +5,11 @@ import { ref } from 'vue';
  * '/iot/driver/list'
  *  url 引用 对象翻页的 list
  * */
-export function getDmList( url: string ,  params) {
+export function getDmList( url: string ,  params:object ) {
   return requestClient.get( url , { params } );
 }
 
-export async function getProductAtt( productId ){
+export async function getProductAtt( productId: number ){
   let pinfo = { productId:productId , pageNum:1,pageSize:100 }
   return getDataInfo( "/iot/productAttribute/list" , pinfo );
 }
@@ -70,13 +70,13 @@ export function updateSelectSn( url: string , attName: string ){
   return sel ;
 }
 
-export function updateSelect( url , attName , iPageNum , iPageSize ){
+export function updateSelect( url:string , attName: string , iPageNum: number , iPageSize: number ){
   const options = ref([]);
   fetchSel('');
   async function fetchSel( val:string ){
     let pinfo = { name:val , pageNum:iPageNum,pageSize:iPageSize }
     const dmdata =  await getDataInfo( url , pinfo );
-    const t = [];
+    const t: any = [];
     dmdata.rows.forEach((item) => (
       t.push({
         label: `${item.name}[${item.id}]`,
@@ -102,15 +102,15 @@ export function updateSelect( url , attName , iPageNum , iPageSize ){
   return sel ;
 }
 
-export function getDataInfo( url , params ){
+export function getDataInfo( url: string , params:object ){
   return requestClient.get( url , { params } );
 }
 
-export function getSnDataInfo( url , params ){
+export function getSnDataInfo( url: string , params:object ){
   return requestClient.get( url , params );
 }
 
-export  function getDriverAtts( driverId ) {
+export  function getDriverAtts( driverId:number ) {
   return getDataInfo( "/iot/driver/attsList",  {driverId: driverId });
 }
 
