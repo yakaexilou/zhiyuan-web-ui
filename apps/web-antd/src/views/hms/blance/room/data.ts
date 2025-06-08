@@ -3,9 +3,14 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { getPopupContainer } from '@vben/utils';
 
+import {
+  dianLiangFormat,
+  disD3custom1,
+  valveFaWei,
+  valveTemp,
+} from '#/api/iot/gatewaydata';
+import { renderDict } from '#/utils/render';
 import { columns3 } from '#/views/iot/valuedataRt/dataStat';
-import {renderDict} from "#/utils/render";
-import {dianLiangFormat, disD3custom1, valveFaWei, valveTemp} from "#/api/iot/gatewaydata";
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -38,11 +43,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '所属区域',
     field: 'fullAddress',
+    width: 120,
   },
   {
-    title: '设备SN',
-    field: 'sn',
-    width: 250,
+    title: '设备编码',
+    field: 'code',
+    width: 120,
     sortType: 'string',
     sortable: true,
   },
@@ -52,7 +58,7 @@ export const columns: VxeGridProps['columns'] = [
     width: 60,
     slots: {
       default: ({ row }) => {
-        return renderDict(row.devStat, 'dev_stat');
+        return renderDict(row.devStat === ""?-1:row.devStat, 'dev_stat');
       },
     },
   },

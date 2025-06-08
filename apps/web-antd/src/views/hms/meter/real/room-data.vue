@@ -76,6 +76,7 @@ const gridOptions: VxeGridProps = {
             Reflect.deleteProperty(formValues, 'stationId');
           }
         }
+        formValues.productType = '2';
         const device = await hmsDeviceList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
@@ -137,7 +138,5 @@ watch(
 </script>
 
 <template>
-  <div class="flex-1 overflow-hidden">
-    <BasicTable table-title="设备管理列表" />
-  </div>
+  <BasicTable table-title="热表实时数据" class="flex-1 overflow-hidden" />
 </template>

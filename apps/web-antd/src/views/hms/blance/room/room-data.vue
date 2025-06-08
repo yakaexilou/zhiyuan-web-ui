@@ -76,6 +76,8 @@ const gridOptions: VxeGridProps = {
             Reflect.deleteProperty(formValues, 'stationId');
           }
         }
+        formValues.productType = '1';
+        formValues.areaCategory = 'room';
         const device = await hmsDeviceList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
@@ -137,7 +139,5 @@ watch(
 </script>
 
 <template>
-  <div class="flex-1 overflow-hidden">
-    <BasicTable table-title="设备管理列表" />
-  </div>
+  <BasicTable table-title="户端平衡数据" class="flex-1 overflow-hidden" />
 </template>

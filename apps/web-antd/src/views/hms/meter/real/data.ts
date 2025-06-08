@@ -3,9 +3,16 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { getPopupContainer } from '@vben/utils';
 
+import {
+  dianLiangFormat,
+  disLjll,
+  disLjrl,
+  disSsll,
+  disSsrl,
+  valveTemp,
+} from '#/api/iot/gatewaydata';
+import { renderDict } from '#/utils/render';
 import { columns3 } from '#/views/iot/valuedataRt/dataStat';
-import {renderDict} from "#/utils/render";
-import {dianLiangFormat, disD3custom1, valveFaWei, valveTemp} from "#/api/iot/gatewaydata";
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -38,11 +45,14 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '所属区域',
     field: 'fullAddress',
+    width: 120,
+    sortType: 'string',
+    sortable: true,
   },
   {
     title: '设备SN',
-    field: 'sn',
-    width: 250,
+    field: 'code',
+    width: 120,
     sortType: 'string',
     sortable: true,
   },
@@ -52,48 +62,16 @@ export const columns: VxeGridProps['columns'] = [
     width: 60,
     slots: {
       default: ({ row }) => {
-        return renderDict(row.devStat, 'dev_stat');
+        return renderDict(row.devStat === ""?-1:row.devStat, 'dev_stat');
       },
     },
   },
   { title: '接收时间', field: 'addtime', width: 150, sortable: true },
   { title: '采集时间', field: 'time', width: 150 },
-  {
-    title: '电量',
-    field: 'batterypower',
-    minWidth: 80,
-    formatter: ({ cellValue }) => dianLiangFormat(cellValue),
-    sortable: true,
-  },
-  { title: '报警', field: 'alarm', minWidth: 80 },
   { title: '上报周期', field: 'period', minWidth: 80, sortable: true },
-  {
-    title: '实时阀位',
-    field: 'realposition',
-    minWidth: 80,
-    formatter: ({ cellValue }) => valveFaWei(cellValue),
-    sortType: 'number',
-    sortable: true,
-  },
-  {
-    title: '目标阀位',
-    field: 'targetposition',
-    minWidth: 80,
-    formatter: ({ cellValue }) => valveFaWei(cellValue),
-    sortType: 'number',
-    sortable: true,
-  },
   {
     title: '回温',
     field: 'returntemp',
-    minWidth: 80,
-    formatter: ({ cellValue }) => valveTemp(cellValue),
-    sortType: 'number',
-    sortable: true,
-  },
-  {
-    title: '目标回温',
-    field: 'targetreturntemp',
     minWidth: 80,
     formatter: ({ cellValue }) => valveTemp(cellValue),
     sortType: 'number',
@@ -108,10 +86,28 @@ export const columns: VxeGridProps['columns'] = [
     sortable: true,
   },
   {
-    title: '运行模式',
-    field: 'custom1',
+    title: '瞬时流量',
+    field: 'flow',
     minWidth: 80,
-    formatter: ({ cellValue }) => disD3custom1(cellValue),
+    formatter: ({ cellValue }) => disSsll(cellValue),
+  },
+  {
+    title: '瞬时功率',
+    field: 'power',
+    minWidth: 80,
+    formatter: ({ cellValue }) => disSsrl(cellValue),
+  },
+  {
+    title: '累计流量',
+    field: 'flowrecorder',
+    minWidth: 80,
+    formatter: ({ cellValue }) => disLjll(cellValue),
+  },
+  {
+    title: '累计热力',
+    field: 'powerrecorder',
+    minWidth: 180,
+    formatter: ({ cellValue }) => disLjrl(cellValue),
   },
 ];
 
