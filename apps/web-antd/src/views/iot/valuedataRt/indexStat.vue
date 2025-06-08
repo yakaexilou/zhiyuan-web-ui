@@ -74,7 +74,7 @@ const gridOptions: VxeGridProps = {
         return await valvedataListRealTime({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
-          devType,
+          devType:devType,
           ...formValues,
         });
       },

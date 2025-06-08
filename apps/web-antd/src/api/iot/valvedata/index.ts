@@ -33,7 +33,7 @@ export function valvedataExport(params?: ValvedataQuery) {
       return commonExport('/iot/valvedata/export', params ?? {});
     }
   }else{
-    if(devType==6){
+    if(devType==3){
       return commonExport('/iot/gatewaydata/export', params ?? {});
     }else{
       return commonExport('/iot/valvedata/export', params ?? {});
@@ -52,7 +52,7 @@ export function valvedataListOrGw(params?: ValvedataQuery) {
       return requestClient.get<PageResult<ValvedataVO>>('/iot/valvedata/list', { params });
     }
   }else{
-    if(devType==6){
+    if(devType==3){
       return requestClient.get<PageResult<GatewaydataVO>>('/iot/gatewaydata/list', { params });
     }else{
       return requestClient.get<PageResult<ValvedataVO>>('/iot/valvedata/list', { params });
@@ -76,7 +76,7 @@ export function valvedataExportOrGw(params?: ValvedataQuery) {
       return commonExport('/iot/valvedata/export', { params });
     }
   }else{
-    if(devType==6){
+    if(devType==3){
       return commonExport('/iot/gatewaydata/export', { params });
     }else{
       return commonExport('/iot/valvedata/export', { params });
@@ -89,7 +89,7 @@ export function valvedataExportOrGw(params?: ValvedataQuery) {
 
 export function valvedataListRealTime(params?: ValvedataQuery) {
   let devType = params?.["devType"] ;
-  if(devType==6){
+  if(devType==3){
     return requestClient.get<PageResult<GatewaydataVO>>('/iot/gatewaydata/rTlist', { params });
   }else{
     return requestClient.get<PageResult<ValvedataVO>>('/iot/valvedata/rTlist', { params });
@@ -104,7 +104,7 @@ export function valvedataListRealTime(params?: ValvedataQuery) {
  */
 export function valvedataExportRealTime(params?: ValvedataQuery) {
   let devType = params?.["devType"] ;
-  if(devType==6){
+  if(devType==3){
     return commonExport('/iot/gatewaydata/rTexport', params ?? {});
   }else{
     return commonExport('/iot/valvedata/rTexport', params ?? {});
