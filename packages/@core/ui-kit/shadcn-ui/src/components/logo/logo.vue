@@ -26,6 +26,11 @@ interface Props {
    * @zh_CN Logo 主题
    */
   theme?: string;
+  /**
+   * @logo 是否长宽一致
+   * width 只有宽度，height 只有高度， 未设置，保持长宽一致
+   */
+  whBase?: string;
 }
 
 defineOptions({
@@ -35,9 +40,10 @@ defineOptions({
 withDefaults(defineProps<Props>(), {
   collapsed: false,
   href: 'javascript:void 0',
-  logoSize: 32,
+  logoSize: 20,
   src: '',
   theme: 'light',
+  whBase: 'height',
 });
 </script>
 
@@ -53,11 +59,13 @@ withDefaults(defineProps<Props>(), {
         :alt="text"
         :src="src"
         :size="logoSize"
+        :wh-base="whBase"
         class="relative rounded-none bg-transparent"
       />
       <span
         v-if="!collapsed"
         class="text-foreground truncate text-nowrap font-semibold"
+        :title="text"
       >
         {{ text }}
       </span>

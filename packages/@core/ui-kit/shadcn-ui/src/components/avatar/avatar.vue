@@ -17,6 +17,7 @@ interface Props extends AvatarFallbackProps, AvatarImageProps, AvatarRootProps {
   dot?: boolean;
   dotClass?: ClassType;
   size?: number;
+  whBase?: string;
 }
 
 defineOptions({
@@ -35,12 +36,24 @@ const text = computed(() => {
 });
 
 const rootStyle = computed(() => {
-  return props.size !== undefined && props.size > 0
-    ? {
+  if (props.size !== undefined && props.size > 0) {
+    if (props.whBase === undefined) {
+      return {
         height: `${props.size}px`,
         width: `${props.size}px`,
-      }
-    : {};
+      };
+    } else {
+      return props.whBase === 'height'
+        ? {
+            height: `${props.size}px`,
+          }
+        : {
+            width: `${props.size}px`,
+          };
+    }
+  } else {
+    return {};
+  }
 });
 </script>
 

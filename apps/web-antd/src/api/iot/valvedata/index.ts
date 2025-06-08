@@ -96,6 +96,11 @@ export function valvedataListRealTime(params?: ValvedataQuery) {
   }
 
 }
+export function valvedataListRealTimeBySn(sn: string) {
+  return requestClient.get<PageResult<ValvedataVO>>(
+    `/iot/valvedata/rTlist/${sn}`,
+  );
+}
 
 /**
  * 导出阀门上报数据列表

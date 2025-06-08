@@ -2,27 +2,38 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { StationForm } from '#/api/hms/station/model';
+import type { HmsDeviceForm } from '#/api/hms/hmsDevice/model';
 
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 
-import { Page, useVbenDrawer } from '@vben/common-ui';
+import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+// import dayjs from 'dayjs';
 import { getVxePopupContainer } from '@vben/utils';
 
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { stationExport, stationList, stationRemove } from '#/api/hms/station';
+import { areaInfo } from '#/api/hms/area';
+import {
+  hmsDeviceExport,
+  hmsDeviceList,
+  hmsDeviceRemove,
+} from '#/api/hms/hmsDevice';
+import { stationInfo } from '#/api/hms/station';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
-import stationDrawer from './station-drawer.vue';
+import fileUploadModal from './file-upload-modal.vue';
+import hmsDeviceModal from './hmsDevice-modal.vue';
 
 const props = defineProps({
   selectDeptStation: {
     type: Object,
+    default: undefined,
   },
 });
+
 const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 80,
@@ -61,13 +72,23 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        // 部门树选择处理
-        if (props.selectDeptStation === undefined) {
-          Reflect.deleteProperty(formValues, 'deptIdAndChild');
-        } else {
-          formValues.deptIdAndChild = props.selectDeptStation.id;
+        if (props.selectDeptStation !== undefined) {
+          if (props.selectDeptStation?.nodeType === 'dept') {
+            formValues.deptId = props.selectDeptStation.id;
+            Reflect.deleteProperty(formValues, 'areaId');
+            Reflect.deleteProperty(formValues, 'stationId');
+          } else if (props.selectDeptStation?.nodeType === 'station') {
+            formValues.stationId = props.selectDeptStation.id.split('-')[1];
+            Reflect.deleteProperty(formValues, 'areaId');
+            Reflect.deleteProperty(formValues, 'deptId');
+          } else {
+            console.log(props.selectDeptStation);
+            formValues.idSeq = props.selectDeptStation?.idSeq;
+            Reflect.deleteProperty(formValues, 'deptId');
+            Reflect.deleteProperty(formValues, 'stationId');
+          }
         }
-        return await stationList({
+        return await hmsDeviceList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -79,17 +100,7 @@ const gridOptions: VxeGridProps = {
     keyField: 'id',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'hms-station-index',
-  // gridEvents: {
-  //   cellClick: (e) => {
-  //     const { row } = e;
-  //     if (lastDictType.value === row.id) {
-  //       return;
-  //     }
-  //     emitter.emit('rowClick', row.id);
-  //     lastDictType.value = row.id;
-  //   },
-  // },
+  id: 'hmsDevice-hmsDevice-index',
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -97,34 +108,34 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   gridOptions,
 });
 
-const [StationDrawer, drawerApi] = useVbenDrawer({
-  connectedComponent: stationDrawer,
+const [HmsDeviceModal, modalApi] = useVbenModal({
+  connectedComponent: hmsDeviceModal,
 });
 
 function handleAdd() {
-  drawerApi.setData({});
-  drawerApi.open();
+  modalApi.setData({ area: area?.value, station: station?.value });
+  modalApi.open();
 }
 
-async function handleEdit(row: Required<StationForm>) {
-  drawerApi.setData({ id: row.id });
-  drawerApi.open();
+async function handleEdit(row: Required<HmsDeviceForm>) {
+  modalApi.setData({ id: row.id, area: area?.value, station: station?.value||null });
+  modalApi.open();
 }
 
-async function handleDelete(row: Required<StationForm>) {
-  await stationRemove(row.id);
+async function handleDelete(row: Required<HmsDeviceForm>) {
+  await hmsDeviceRemove(row.id);
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Required<StationForm>) => row.id);
+  const ids = rows.map((row: Required<HmsDeviceForm>) => row.id);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await stationRemove(ids);
+      await hmsDeviceRemove(ids);
       await tableApi.query();
     },
   });
@@ -132,30 +143,56 @@ function handleMultiDelete() {
 
 function handleDownloadExcel() {
   commonDownloadExcel(
-    stationExport,
-    '站房信息数据',
+    hmsDeviceExport,
+    '设备管理数据',
     tableApi.formApi.form.values,
     {
       fieldMappingTime: formOptions.fieldMappingTime,
     },
   );
 }
+const station = ref();
+const area = ref();
 watch(
   () => props.selectDeptStation,
-  () => {
-    // console.log(props.selectDeptStation);
+  async () => {
+    // gridOptions.columns = getColumns();
+    // tableApi.setGridOptions(gridOptions);
+    if (props.selectDeptStation?.nodeType !== undefined) {
+      if (props.selectDeptStation?.nodeType === 'station') {
+        const id = props.selectDeptStation.id.split('-')[1];
+        await stationInfo(id).then((res) => (station.value = res));
+      } else if (props.selectDeptStation?.nodeType !== 'dept') {
+        const id = props.selectDeptStation?.id.split('-')[1];
+        await areaInfo(id).then((res) => (area.value = res));
+      }
+    }
     tableApi.reload();
   },
 );
+const [FileUploadModal, fileUploadApi] = useVbenModal({
+  connectedComponent: fileUploadModal,
+});
 </script>
 
 <template>
-  <Page :auto-content-height="true">
-    <BasicTable table-title="站房信息列表">
+  <div class="flex-1 overflow-hidden">
+    <BasicTable table-title="设备管理列表">
+      <template #toolbar-actions>
+        <Space>
+          <a-button
+            v-access:code="['hms:hmsDevice:import']"
+            type="primary"
+            @click="fileUploadApi.open"
+          >
+            {{ $t('hms.device.action.import_build_data') }}
+          </a-button>
+        </Space>
+      </template>
       <template #toolbar-tools>
         <Space>
           <a-button
-            v-access:code="['hms:station:export']"
+            v-access:code="['hmsDevice:hmsDevice:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
@@ -164,15 +201,16 @@ watch(
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary"
-            v-access:code="['hms:station:remove']"
+            v-access:code="['hmsDevice:hmsDevice:remove']"
             @click="handleMultiDelete"
           >
             {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
             type="primary"
-            v-access:code="['hms:station:add']"
+            v-access:code="['hmsDevice:hmsDevice:add']"
             @click="handleAdd"
+            :disabled="area === undefined "
           >
             {{ $t('pages.common.add') }}
           </a-button>
@@ -181,7 +219,7 @@ watch(
       <template #action="{ row }">
         <Space>
           <ghost-button
-            v-access:code="['hms:station:edit']"
+            v-access:code="['hmsDevice:hmsDevice:edit']"
             @click.stop="handleEdit(row)"
           >
             {{ $t('pages.common.edit') }}
@@ -194,7 +232,7 @@ watch(
           >
             <ghost-button
               danger
-              v-access:code="['hms:station:remove']"
+              v-access:code="['hmsDevice:hmsDevice:remove']"
               @click.stop=""
             >
               {{ $t('pages.common.delete') }}
@@ -203,6 +241,7 @@ watch(
         </Space>
       </template>
     </BasicTable>
-    <StationDrawer @reload="tableApi.query()" />
-  </Page>
+    <HmsDeviceModal @reload="tableApi.query()" />
+    <FileUploadModal @reload="tableApi.query" />
+  </div>
 </template>

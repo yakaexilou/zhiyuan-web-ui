@@ -37,7 +37,7 @@ onMounted(() => {
       trigger: 'axis',
     },
     xAxis: {
-      data: Array.from({ length: 12 }).map((_item, index) => `${index + 1}月`),
+      data: Array.from({ length: 20 }).map((_item, index) => `${index*5 + 20}%`),
       type: 'category',
     },
     yAxis: {

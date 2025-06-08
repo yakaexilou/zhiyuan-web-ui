@@ -1,5 +1,5 @@
 import { defineOverridesPreferences } from '@vben/preferences';
-
+import freselogo from '/frese-rgb.png';
 /**
  * @description 项目配置文件
  * 只需要覆盖项目中的一部分配置，不需要的配置不用覆盖，会自动使用默认配置
@@ -57,8 +57,8 @@ export const overridesPreferences = defineOverridesPreferences({
    *
    * !!! 更改配置后请清空浏览器缓存
    */
-  // logo: {
-  //   enable: true,
-  //   source: '',
-  // },
+  logo: {
+    enable: true,
+    source: freselogo,
+  },
 });

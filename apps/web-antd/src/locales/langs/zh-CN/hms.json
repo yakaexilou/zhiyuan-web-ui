@@ -1,0 +1,15 @@
+{
+  "area": {
+    "action": {
+      "addMultipleArea": "批量新增区域",
+      "addBuilding": "新增楼栋",
+      "addUnit": "新增单元",
+      "addRoom": "新增户室"
+    }
+  },
+  "device": {
+    "action": {
+      "import_build_data": "导入单元阀数据"
+    }
+  }
+}

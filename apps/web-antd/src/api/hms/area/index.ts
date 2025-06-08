@@ -40,6 +40,14 @@ export function areaInfo(id: ID) {
 export function areaAdd(data: AreaForm) {
   return requestClient.postWithMsg<void>('/hms/area', data);
 }
+/**
+ * 新增区域信息
+ * @param data
+ * @returns void
+ */
+export function areaAddNoMsg(data: AreaForm) {
+  return requestClient.post<AreaVO>('/hms/area', data);
+}
 
 /**
  * 更新区域信息

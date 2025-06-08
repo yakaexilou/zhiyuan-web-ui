@@ -118,6 +118,10 @@ export interface StationQuery extends PageQuery {
    * 状态
    */
   status?: number;
+  /**
+   * 部门ID
+   */
+  deptId?: number;
 }
 
 export interface DeptStationVo {

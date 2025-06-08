@@ -1,4 +1,9 @@
-import type { StationForm, StationQuery, StationVO } from './model';
+import type {
+  DeptStationVo,
+  StationForm,
+  StationQuery,
+  StationVO,
+} from './model';
 
 import type { ID, IDS, PageResult } from '#/api/common';
 

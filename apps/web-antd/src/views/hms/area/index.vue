@@ -1,173 +1,30 @@
 <script setup lang="ts">
-import type { VbenFormProps } from '@vben/common-ui';
-
-import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { AreaForm } from '#/api/hms/area/model';
+// import type { VbenFormProps } from '@vben/common-ui';
+//
+// import type { VxeGridProps } from '#/adapter/vxe-table';
+// import type { AreaForm } from '#/api/hms/area/model';
 
 import { ref } from 'vue';
 
-import { Page, useVbenDrawer } from '@vben/common-ui';
-import { $t } from '@vben/locales';
+import { Page } from '@vben/common-ui';
+
 // import { setupStationQuerySelect } from '#/views/hms/station/select-unit';
-import { getVxePopupContainer } from '@vben/utils';
-
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
-
-import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { areaExport, areaList, areaRemove } from '#/api/hms/area';
-import { stationList } from '#/api/hms/station';
+// import { Modal, Popconfirm, Space } from 'ant-design-vue';
+// import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+// import { areaExport, areaList, areaRemove } from '#/api/hms/area';
 // import { stationList } from '#/api/hms/station';
-import { commonDownloadExcel } from '#/utils/file/download';
+// import { commonDownloadExcel } from '#/utils/file/download';
+// import BuildModelModal from '#/views/hms/area/build-model-modal.vue';
 import DeptStationTree from '#/views/hms/station/dept-station-tree.vue';
 
-import areaDrawer from './area-drawer.vue';
-import { columns, querySchema } from './data';
+import AreaIndex from './area-index.vue';
+// import areaDrawer from './area-drawer.vue';
+// import { columns, querySchema } from './data';
 
-const formOptions: VbenFormProps = {
-  commonConfig: {
-    labelWidth: 80,
-    componentProps: {
-      allowClear: true,
-    },
-  },
-  schema: querySchema(),
-  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-  // 处理区间选择器RangePicker时间格式 将一个字段映射为两个字段 搜索/导出会用到
-  // 不需要直接删除
-  // fieldMappingTime: [
-  //  [
-  //    'createTime',
-  //    ['params[beginTime]', 'params[endTime]'],
-  //    ['YYYY-MM-DD 00:00:00', 'YYYY-MM-DD 23:59:59'],
-  //  ],
-  // ],
-};
-
-const gridOptions: VxeGridProps = {
-  checkboxConfig: {
-    // 高亮
-    highlight: true,
-    // 翻页时保留选中状态
-    reserve: true,
-    // 点击行选中
-    // trigger: 'row',
-  },
-  // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
-  // columns: columns(),
-  columns,
-  height: 'auto',
-  keepSource: true,
-  pagerConfig: {},
-  proxyConfig: {
-    ajax: {
-      query: async ({ page }, formValues = {}) => {
-        // 部门树选择处理
-        if (selectDeptStation.value === undefined) {
-          Reflect.deleteProperty(formValues, 'deptId');
-          Reflect.deleteProperty(formValues, 'stationId');
-        } else {
-          if (selectDeptStation.value.nodeType === 'dept') {
-            formValues.deptId = selectDeptStation.value.id;
-          } else {
-            Reflect.deleteProperty(formValues, 'deptId');
-          }
-          if (selectDeptStation.value.nodeType === 'station') {
-            formValues.stationId = selectDeptStation.value.id.split('-')[1];
-          } else {
-            Reflect.deleteProperty(formValues, 'stationId');
-          }
-        }
-        return await areaList({
-          pageNum: page.currentPage,
-          pageSize: page.pageSize,
-          ...formValues,
-        });
-      },
-    },
-  },
-  rowConfig: {
-    keyField: 'id',
-  },
-  // 表格全局唯一表示 保存列配置需要用到
-  id: 'hms-area-index',
-};
 // 左边部门用
 const selectDeptStation = ref();
+const selectTreeId = ref();
 
-const [BasicTable, tableApi] = useVbenVxeGrid({
-  formOptions,
-  gridOptions,
-});
-
-const [AreaDrawer, drawerApi] = useVbenDrawer({
-  connectedComponent: areaDrawer,
-});
-
-function handleAdd() {
-  drawerApi.setData({});
-  drawerApi.open();
-}
-
-async function handleEdit(row: Required<AreaForm>) {
-  drawerApi.setData({ id: row.id });
-  drawerApi.open();
-}
-
-async function handleDelete(row: Required<AreaForm>) {
-  await areaRemove(row.id);
-  await tableApi.query();
-}
-
-function handleMultiDelete() {
-  const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Required<AreaForm>) => row.id);
-  Modal.confirm({
-    title: '提示',
-    okType: 'danger',
-    content: `确认删除选中的${ids.length}条记录吗？`,
-    onOk: async () => {
-      await areaRemove(ids);
-      await tableApi.query();
-    },
-  });
-}
-
-function handleDownloadExcel() {
-  commonDownloadExcel(
-    areaExport,
-    '区域信息数据',
-    tableApi.formApi.form.values,
-    {
-      fieldMappingTime: formOptions.fieldMappingTime,
-    },
-  );
-}
-async function setupStationQuerySelect() {
-  const options = ref();
-  async function fetch(val: string) {
-    const stationListMap = await stationList({ name: val });
-    options.value = stationListMap.rows.map((item) => ({
-      label: `${item.name}[${item.code}]`,
-      value: item.id,
-    }));
-  }
-  await fetch('');
-  tableApi.formApi.updateSchema([
-    {
-      componentProps: {
-        optionFilterProp: 'label',
-        optionLabelProp: 'label',
-        options,
-        showSearch: true,
-        onSearch: async (val: string) => {
-          await fetch(val);
-        },
-      },
-      fieldName: 'stationId',
-    },
-  ]);
-}
-setupStationQuerySelect();
 // console.log(tableApi.formApi);
 // setupStationQuerySelect({
 //   listApi: stationList,
@@ -176,74 +33,111 @@ setupStationQuerySelect();
 //   formApi: tableApi.formApi,
 // });
 // const { hasAccessByCodes } = useAccess();
-
-function deptSelect(k: any, { node }) {
+const currentComponent = ref('dept');
+async function deptSelect(k, { node }) {
   selectDeptStation.value = node;
-  tableApi.reload();
+  currentComponent.value = node.nodeType;
 }
+// onMounted(() => {
+//   currentComponent = import('./area-index.vue');
+// });
+
+// const canAddArea = computed(() => {
+//   return selectDeptStation.value
+//     ? selectDeptStation.value.nodeType !== 'station'
+//     : true;
+// });
+// const openBuildModelModal = ref(false);
+// function handleAddMultipleArea() {
+//   openBuildModelModal.value = true;
+// }
 </script>
 
 <template>
   <Page :auto-content-height="true">
     <div class="flex h-full gap-[8px]">
       <DeptStationTree
+        v-model:select-dept-id="selectTreeId"
         class="w-[260px]"
-        @reload="() => tableApi.reload()"
         @select="deptSelect"
       />
-      <BasicTable table-title="区域信息列表" class="flex-1 overflow-hidden">
-        <template #toolbar-tools>
-          <Space>
-            <a-button
-              v-access:code="['hms:area:export']"
-              @click="handleDownloadExcel"
-            >
-              {{ $t('pages.common.export') }}
-            </a-button>
-            <a-button
-              :disabled="!vxeCheckboxChecked(tableApi)"
-              danger
-              type="primary"
-              v-access:code="['hms:area:remove']"
-              @click="handleMultiDelete"
-            >
-              {{ $t('pages.common.delete') }}
-            </a-button>
-            <a-button
-              type="primary"
-              v-access:code="['hms:area:add']"
-              @click="handleAdd"
-            >
-              {{ $t('pages.common.add') }}
-            </a-button>
-          </Space>
-        </template>
-        <template #action="{ row }">
-          <Space>
-            <ghost-button
-              v-access:code="['hms:area:edit']"
-              @click.stop="handleEdit(row)"
-            >
-              {{ $t('pages.common.edit') }}
-            </ghost-button>
-            <Popconfirm
-              :get-popup-container="getVxePopupContainer"
-              placement="left"
-              title="确认删除？"
-              @confirm="handleDelete(row)"
-            >
-              <ghost-button
-                danger
-                v-access:code="['hms:area:remove']"
-                @click.stop=""
-              >
-                {{ $t('pages.common.delete') }}
-              </ghost-button>
-            </Popconfirm>
-          </Space>
-        </template>
-      </BasicTable>
+      <!--      <AreaIndex :select-dept-station="selectDeptStation" />-->
+      <AreaIndex :select-dept-station="selectDeptStation" />
+      <!--      v-if="currentComponent === 'station' || currentComponent === 'area'"-->
+      <!--      <StationIndex-->
+      <!--        v-if="currentComponent === 'dept'"-->
+      <!--        :select-dept-station="selectDeptStation"-->
+      <!--        class="flex-1 overflow-hidden"-->
+      <!--      />-->
+      <!--        @reload="() => tableApi.reload()"-->
+      <!--      <BasicTable table-title="区域信息列表" class="flex-1 overflow-hidden">-->
+      <!--        <template #toolbar-actions>-->
+      <!--          <Space>-->
+      <!--            <a-button-->
+      <!--              v-access:code="['hms:area:add']"-->
+      <!--              @click="handleAddMultipleArea"-->
+      <!--              type="primary"-->
+      <!--              :disabled="canAddArea"-->
+      <!--            >-->
+      <!--              {{ $t('hms.area.action.addMultipleArea') }}-->
+      <!--            </a-button>-->
+      <!--          </Space>-->
+      <!--        </template>-->
+      <!--        <template #toolbar-tools>-->
+      <!--          <Space>-->
+      <!--            <a-button-->
+      <!--              v-access:code="['hms:area:export']"-->
+      <!--              @click="handleDownloadExcel"-->
+      <!--            >-->
+      <!--              {{ $t('pages.common.export') }}-->
+      <!--            </a-button>-->
+      <!--            <a-button-->
+      <!--              :disabled="!vxeCheckboxChecked(tableApi)"-->
+      <!--              danger-->
+      <!--              type="primary"-->
+      <!--              v-access:code="['hms:area:remove']"-->
+      <!--              @click="handleMultiDelete"-->
+      <!--            >-->
+      <!--              {{ $t('pages.common.delete') }}-->
+      <!--            </a-button>-->
+      <!--            <a-button-->
+      <!--              type="primary"-->
+      <!--              v-access:code="['hms:area:add']"-->
+      <!--              @click="handleAdd"-->
+      <!--            >-->
+      <!--              {{ $t('pages.common.add') }}-->
+      <!--            </a-button>-->
+      <!--          </Space>-->
+      <!--        </template>-->
+      <!--        <template #action="{ row }">-->
+      <!--          <Space>-->
+      <!--            <ghost-button-->
+      <!--              v-access:code="['hms:area:edit']"-->
+      <!--              @click.stop="handleEdit(row)"-->
+      <!--            >-->
+      <!--              {{ $t('pages.common.edit') }}-->
+      <!--            </ghost-button>-->
+      <!--            <Popconfirm-->
+      <!--              :get-popup-container="getVxePopupContainer"-->
+      <!--              placement="left"-->
+      <!--              title="确认删除？"-->
+      <!--              @confirm="handleDelete(row)"-->
+      <!--            >-->
+      <!--              <ghost-button-->
+      <!--                danger-->
+      <!--                v-access:code="['hms:area:remove']"-->
+      <!--                @click.stop=""-->
+      <!--              >-->
+      <!--                {{ $t('pages.common.delete') }}-->
+      <!--              </ghost-button>-->
+      <!--            </Popconfirm>-->
+      <!--          </Space>-->
+      <!--        </template>-->
+      <!--      </BasicTable>-->
+      <!--      <AreaDrawer @reload="tableApi.query()" />-->
+      <!--      <a-modal v-model:open="openBuildModelModal">-->
+      <!--        <BuildModelModal />-->
+      <!--      </a-modal>-->
     </div>
-    <AreaDrawer @reload="tableApi.query()" />
   </Page>
 </template>
