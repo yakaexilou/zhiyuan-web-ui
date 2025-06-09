@@ -1,30 +1,17 @@
 <script setup lang="ts">
-import type { Recordable } from '@vben/types';
+import {Page, useVbenDrawer, type VbenFormProps} from '@vben/common-ui';
+import {getVxePopupContainer} from '@vben/utils';
 
-import { ref } from 'vue';
+import {Modal, Popconfirm, Space} from 'ant-design-vue';
 
-import { Page, useVbenDrawer, type VbenFormProps } from '@vben/common-ui';
-import { getVxePopupContainer } from '@vben/utils';
+import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps} from '#/adapter/vxe-table';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
-import dayjs from 'dayjs';
-
-import {   
-  useVbenVxeGrid,
-  vxeCheckboxChecked,
-  type VxeGridProps 
-} from '#/adapter/vxe-table';
-
-import {
-  deviceExport,
-  deviceList,
-  deviceRemove,
-} from '#/api/iot/device';
-import type { DeviceForm } from '#/api/iot/device/model';
-import { commonDownloadExcel } from '#/utils/file/download';
+import {deviceExport, deviceList, deviceRemove,} from '#/api/iot/device';
+import type {DeviceForm} from '#/api/iot/device/model';
+import {commonDownloadExcel} from '#/utils/file/download';
 
 import deviceDrawer from './device-drawer.vue';
-import { columns, querySchema } from './data';
+import {columns, querySchema} from './data';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -138,8 +125,8 @@ function handleDownloadExcel() {
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
-            type="primary" 
-            v-access:code="['iot:device:remove']" 
+            type="primary"
+            v-access:code="['iot:device:remove']"
             @click="handleMultiDelete">
             {{ $t('pages.common.delete') }}
           </a-button>

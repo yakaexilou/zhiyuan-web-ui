@@ -14,6 +14,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { valvedataListRealTime } from '#/api/iot/valvedata';
 import ValueStatPage from '#/views/iot/valuedataRt/valueStat/index.vue';
 
+
 import {
   columns,
   columns1,
@@ -56,6 +57,11 @@ const formOptions: VbenFormProps = {
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
 };
 
+let fsn = '' ;
+let fdevStat= '' ;
+let fdevSortType= '' ;
+let acc=0;
+
 const gridOptions: VxeGridProps = {
   checkboxConfig: {
     highlight: true,
@@ -71,12 +77,29 @@ const gridOptions: VxeGridProps = {
         if (selectDevTypeId.value.length === 1) {
           setColumns(selectDevTypeId.value[0]);
         }
+        if(page.currentPage==1){
+          fsn = formValues["sn"] ;
+          fdevStat= formValues["devStat"] ;
+          fdevSortType= formValues["devSortType"] ;
+          return await valvedataListRealTime({
+            pageNum: page.currentPage,
+            pageSize: page.pageSize,
+            devType:devType,
+            ...formValues,
+          });
+        }else{
+          if(fsn!=""&&fsn!=null) formValues["sn"] =fsn  ;
+          if(fdevStat!=""&&fdevStat!=null)formValues["devStat"] = fdevStat  ;
+          if(fdevSortType!=""&&fdevSortType!=null)formValues["devSortType"] =fdevSortType ;
+        }
+        console.log( "  == == "+ page.currentPage + " "+ JSON.stringify( formValues) );
         return await valvedataListRealTime({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           devType:devType,
           ...formValues,
         });
+
       },
     },
   },

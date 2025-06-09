@@ -206,14 +206,7 @@ export const columns5: VxeGridProps['columns'] = [
   {    title: '备用7',    field: 'custom7',         minWidth: 40,    visible: false,  },
   {    title: '备用8',    field: 'custom8',         minWidth: 40,    visible: false,  },
 ];
-export const columns6: VxeGridProps['columns'] = [
-  {    title: 'id',    field: 'id',    visible: false,  },
-  {    title: '设备编码',    field: 'sn',    minWidth: 150,    sortType:"string",    sortable:true,  },
-  {    title: '数据上报时间',    field: 'time',    minWidth: 150,  },
-  {    title: '电池电量',    field: 'batterypower',    formatter: ({ cellValue }) => dianLiangFormat( cellValue ),    minWidth:"150",    sortType:"number",    sortable:true,  },
-  {    title: '信号强度',    field: 'csq',    formatter: ({ cellValue }) => cqsFormat( cellValue ),    minWidth:"150",    sortType:"number",    sortable:true,  },
-  {    title: '通讯ICCID',    field: 'iccid',    minWidth:"150",  },
-];
+
 
 export const drawerSchema: FormSchemaGetter = () => [
 ];

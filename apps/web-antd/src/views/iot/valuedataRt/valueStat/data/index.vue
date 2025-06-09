@@ -97,7 +97,7 @@ watch([() => props.sn, () => props.devType], ([sn, dt]) => {
 </script>
 <template>
   <Page :auto-content-height="true" class="custom-page">
-    <BasicTable table-title="阀门上报数据列表" class="custom-page">
+    <BasicTable table-title="上报数据列表" class="custom-page">
       <template #action="{ row }" :scroll="{ y: 'calc(100vh - 180px)' }">
       </template>
     </BasicTable>
