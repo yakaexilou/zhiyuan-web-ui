@@ -93,8 +93,10 @@ export function valveFaWei( val: number ) {
   if(val==null) return "--";
   if(val===-0.1)
     return "--";
-  else
-    return val+"%";
+  else{
+    // return val+"%";
+    return "100%";
+  }
 }
 export function valveTemp( val: number ) {
   if(val==null) return "--";

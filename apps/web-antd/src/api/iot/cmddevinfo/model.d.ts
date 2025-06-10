@@ -46,6 +46,9 @@ export interface CmddevinfoVO {
    */
   cmdstat: number;
 
+  /** 下发指令 */
+  cmdtext: string;
+
   /**
    * 创建时间
    */
@@ -103,6 +106,9 @@ export interface CmddevinfoForm extends BaseEntity {
    * 指令状态
    */
   cmdstat?: number;
+
+  /** 下发指令 */
+  cmdtext: string;
 
   /**
    * 创建时间

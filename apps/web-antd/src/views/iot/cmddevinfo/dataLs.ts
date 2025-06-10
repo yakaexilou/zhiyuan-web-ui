@@ -9,7 +9,7 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'actid',
-    label: '指令操作',
+    label: '指令批次号',
   },
   {
     component: 'Input',
@@ -40,7 +40,7 @@ export const querySchema: FormSchemaGetter = () => [
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
-  {    title: '指令操作',    field: 'actid',    minWidth:150,  },
+  {    title: '指令批次号',    field: 'actid',    minWidth:150,  },
   {    title: '创建时间',    field: 'addtime',    minWidth:150,  },
   {    title: '设备序列号',    field: 'sn',    minWidth:250,  },
   {    title: '回复时间',    field: 'returntime',    minWidth:150,  },
