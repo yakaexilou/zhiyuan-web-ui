@@ -51,9 +51,9 @@ export const columns: VxeGridProps['columns'] = [
   {    title: '指令名称',    field: 'cmdcode',    slots: {      default: ({ row }) => {        return renderDict(row.cmdcode, 'dev_allcmd_code');      },    },    minWidth: 100,  },
   {    title: '读写标识',    field: 'type',    slots: {      default: ({ row }) => {        return renderDict(row.type, 'cmdtype');      },    },    minWidth:100,  },
   {    title: '创建时间',    field: 'addtime',    minWidth:150,  },
-  {    title: '下发指令',    field: 'cmdtext',    minWidth:50 ,showOverflow: "tooltip" },
   {    title: '回复时间',    field: 'returntime',    minWidth:150,  },
-  {    title: '回复信息',    field: 'returninfo',    minWidth:150,    formatter: ({ row }) => disCmdReturnVal( row.type , row.returninfo ), showOverflow: "tooltip" },
+  {    title: '下发指令',    field: 'cmdtext',    minWidth:150 ,showOverflow: "tooltip" },
+  {    title: '回复信息',    field: 'returninfo',    minWidth:150,   showOverflow: "tooltip" , formatter: ({ row }) => disCmdReturnVal( row.type , row.returninfo ),  },
   {    title: '指令参数信息',    field: 'cmdparams',    minWidth:150, showOverflow: "tooltip" },
   {    field: 'action',    fixed: 'right',    slots: { default: 'action' },    title: '操作',    width: 120,  },
 ];
