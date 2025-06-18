@@ -192,7 +192,11 @@ function getValue() {
         return item.url;
       }
       // 注意这里取的key为 url
-      return item?.response?.url;
+      if(item.response.url){
+        return  item.response.url
+      }
+      console.log(item.response)
+      return item?.response;
     });
   return list;
 }

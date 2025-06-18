@@ -15,6 +15,14 @@ export function deviceList(params?: DeviceQuery) {
   return requestClient.get<PageResult<DeviceVO>>('/iot/device/list', { params });
 }
 
+export function deviceListByTask(params?: DeviceQuery) {
+  return requestClient.get<PageResult<DeviceVO>>('/iot/device/taskList', { params });
+}
+
+export function deviceListByAdd(params?: DeviceQuery) {
+  return requestClient.get<PageResult<DeviceVO>>('/iot/device/taskListAddSn', { params });
+}
+
 /**
  * 导出设备信息列表
  * @param params

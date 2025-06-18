@@ -160,12 +160,7 @@ function handleAddComandInfo() {
     <BasicTable table-title="设备上报数据列表" class="w-full">
       <template #toolbar-tools>
         <Space>
-          <a-button
-            v-access:code="['iot:valvedata:list']"
-            @click="handleAddComandInfo"
-          >
-            批量下发指令
-          </a-button>
+          <a-button v-access:code="['iot:valvedata:list']"  @click="handleAddComandInfo" >批量下发指令</a-button>
         </Space>
       </template>
       <template #action="{ row }"></template>

@@ -35,6 +35,9 @@ export function getSnCmdInfoSelect( attName: string ){
   return updateSelectSn( "/iot/cmddevinfo/listsn" , attName );
 }
 
+export function getUpgradeFileSelect( attName: string , iPageNum: number , iPageSize: number ){
+  return updateSelectDisId( "/iot/otaupgradeFile/list" , attName , iPageNum , iPageSize ,false );
+}
 
 export function updateSelectSn( url: string , attName: string ){
   const options = ref([]);
@@ -42,16 +45,14 @@ export function updateSelectSn( url: string , attName: string ){
   async function fetchSel( val:string ){
     let pinfo = { sn:val }
     const dmdata =  await getSnDataInfo( url , pinfo );
-
-    console.log( "dmdata: "+ dmdata );
-    const t = [];
-    dmdata.forEach((item) => (
+    let t = [];
+    dmdata.forEach((item: any) => (
       t.push({
         label: item,
         value: item,
       })
     ));
-    options.value=t;
+    options.value = t;
   }
   let sel = [
     {
@@ -71,18 +72,27 @@ export function updateSelectSn( url: string , attName: string ){
 }
 
 export function updateSelect( url:string , attName: string , iPageNum: number , iPageSize: number ){
+  return updateSelectDisId( url , attName , iPageNum , iPageSize , true );
+}
+
+export function updateSelectDisId( url:string , attName: string , iPageNum: number , iPageSize: number , isDisId: boolean){
+  if(isDisId==null)isDisId = true ;
   const options = ref([]);
   fetchSel('');
   async function fetchSel( val:string ){
     let pinfo = { name:val , pageNum:iPageNum,pageSize:iPageSize }
     const dmdata =  await getDataInfo( url , pinfo );
     const t: any = [];
-    dmdata.rows.forEach((item) => (
-      t.push({
-        label: `${item.name}[${item.id}]`,
-        value: item.id,
-      })
-    ));
+    if(isDisId){
+      dmdata.rows.forEach((item) => (
+        t.push({ label: `${item.name}[${item.id}]`,value: item.id,})
+      ));
+    }else{
+      dmdata.rows.forEach((item) => (
+        t.push({ label: `${item.name}`,value: item.id,})
+      ));
+    }
+
     options.value=t;
   }
   let sel = [
@@ -101,6 +111,7 @@ export function updateSelect( url:string , attName: string , iPageNum: number , 
   ];
   return sel ;
 }
+
 
 export function getDataInfo( url: string , params:object ){
   return requestClient.get( url , { params } );

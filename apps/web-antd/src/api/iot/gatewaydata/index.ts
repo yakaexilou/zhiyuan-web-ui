@@ -185,3 +185,18 @@ export function disLjrl( val: number ) {
     }
   }
 }
+export function disFileSize( val: number ) {
+  if(val==null)
+    return "空";
+  else{
+    if(val==0){
+      return "空";
+    }else{
+      if(val>1000){
+        return (val/1000).toFixed(3)+"k" ;
+      }else{
+        return val+"b" ;
+      }
+    }
+  }
+}
