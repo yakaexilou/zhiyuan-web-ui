@@ -7,7 +7,7 @@ import type { AreaForm, AreaVO } from '#/api/hms/area/model';
 //     require: false,
 //   },
 // });
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch, computed } from 'vue';
 
 import { areaAddNoMsg, areaList } from '#/api/hms/area';
 
@@ -20,6 +20,7 @@ interface FormState {
   hasUnit: boolean;
   unitStart: 1;
   unitEnd: 1;
+  hasFloor: boolean;
   floorStart: number;
   floorEnd: number;
   roomNumber: number;
@@ -53,6 +54,7 @@ const formData: FormState = reactive({
   hasUnit: true,
   unitStart: 1,
   unitEnd: 1,
+  hasFloor: true,
   hasRoom: true,
   floorStart: 1,
   floorEnd: 1,
@@ -69,12 +71,16 @@ const onSubmit = () => {
   if (formData.hasUnit) {
     unitTotalNumber.value =
       buildTotalNumber.value * (formData.unitEnd - formData.unitStart + 1);
-    successUnitTotalNumber.value = 0;
+  } else {
+    unitTotalNumber.value = buildTotalNumber.value;
   }
+  successUnitTotalNumber.value = 0;
+
   if (formData.hasRoom) {
-    roomTotalNumber.value =
-      unitTotalNumber.value *
-      (formData.roomNumber * (formData.floorEnd - formData.floorStart + 1));
+    const floorTotal = formData.hasFloor
+      ? formData.floorEnd - formData.floorStart + 1
+      : 1;
+    roomTotalNumber.value = unitTotalNumber.value * formData.roomNumber * floorTotal;
     successRoomTotalNumber.value = 0;
   }
   openResult.value = true;
@@ -113,6 +119,9 @@ function PrefixInteger(num: number, length: number) {
 const openResult = ref(false);
 const labelCol = { style: { width: '100px' } };
 const wrapperCol = { span: 12 };
+const roomNumberLabel = computed(() =>
+  formData.hasFloor ? '每层户数' : '房间数量',
+);
 async function parseBuild() {
   for (let i = formData.buildStart; i <= formData.buildEnd; i++) {
     const area: AreaForm = {
@@ -147,14 +156,18 @@ async function createUnit(build: AreaVO) {
       successUnitTotalNumber.value += 1;
       await createRoom(res, j);
     }
+  } else {
+    await createRoom(build, 1);
   }
 }
 async function createRoom(unit: AreaVO, j: number) {
   if (formData.hasRoom) {
-    for (let k = formData.floorStart; k <= formData.floorEnd; k++) {
+    const startFloor = formData.hasFloor ? formData.floorStart : 1;
+    const endFloor = formData.hasFloor ? formData.floorEnd : 1;
+    for (let k = startFloor; k <= endFloor; k++) {
       for (let l = 1; l <= formData.roomNumber; l++) {
         const roomName =
-          k +
+          (formData.hasFloor ? k : '') +
           PrefixInteger(
             l +
               (formData.roomNumberResetByUnit
@@ -162,12 +175,14 @@ async function createRoom(unit: AreaVO, j: number) {
                 : formData.roomNumber * (j - 1)),
             2,
           );
-        const areaRoom = {
+        const areaRoom: AreaForm = {
           name: roomName,
           category: 'room',
           parentId: unit.id,
-          roomFloorNumber: k,
-        };
+        } as any;
+        if (formData.hasFloor) {
+          (areaRoom as any).roomFloorNumber = k;
+        }
         await createArea(areaRoom);
         successRoomTotalNumber.value += 1;
       }
@@ -220,51 +235,62 @@ async function createRoom(unit: AreaVO, j: number) {
           </a-form-item>
         </a-col>
         <a-col class="gutter-row" :span="12">
-          <a-form-item label="单元称谓">
-            <a-radio-group v-model:value="formData.unitEndWidth">
-              <a-radio-button value="单元" name="unitEndWidth">
-                单元
-              </a-radio-button>
-              <a-radio-button value="门" name="unitEndWidth">门</a-radio-button>
-            </a-radio-group>
+          <a-form-item label="是否包含楼层">
+            <a-switch v-model:checked="formData.hasFloor" />
           </a-form-item>
         </a-col>
       </a-row>
+      <template v-if="formData.hasUnit">
+        <a-row :gutter="16">
+          <a-col class="gutter-row" :span="12">
+            <a-form-item label="单元称谓">
+              <a-radio-group v-model:value="formData.unitEndWidth">
+                <a-radio-button value="单元" name="unitEndWidth">单元</a-radio-button>
+                <a-radio-button value="门" name="unitEndWidth">门</a-radio-button>
+              </a-radio-group>
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row :gutter="16">
+          <a-col class="gutter-row" :span="12">
+            <a-form-item label="单元开始">
+              <a-input-number :step="1" v-model:value="formData.unitStart" />
+            </a-form-item>
+          </a-col>
+          <a-col class="gutter-row" :span="12">
+            <a-form-item label="单元结束">
+              <a-input-number :step="1" v-model:value="formData.unitEnd" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </template>
+      <template v-if="formData.hasFloor">
+        <a-row :gutter="16">
+          <a-col class="gutter-row" :span="12">
+            <a-form-item label="楼层开始">
+              <a-input-number :step="1" v-model:value="formData.floorStart" />
+            </a-form-item>
+          </a-col>
+          <a-col class="gutter-row" :span="12">
+            <a-form-item label="楼层结束">
+              <a-input-number :step="1" v-model:value="formData.floorEnd" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </template>
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="12">
-          <a-form-item label="单元开始">
-            <a-input-number :step="1" v-model:value="formData.unitStart" />
-          </a-form-item>
-        </a-col>
-        <a-col class="gutter-row" :span="12">
-          <a-form-item label="单元结束">
-            <a-input-number :step="1" v-model:value="formData.unitEnd" />
-          </a-form-item>
-        </a-col>
-      </a-row>
-      <a-row :gutter="16">
-        <a-col class="gutter-row" :span="12">
-          <a-form-item label="楼层开始">
-            <a-input-number :step="1" v-model:value="formData.floorStart" />
-          </a-form-item>
-        </a-col>
-        <a-col class="gutter-row" :span="12">
-          <a-form-item label="楼层结束">
-            <a-input-number :step="1" v-model:value="formData.floorEnd" />
-          </a-form-item>
-        </a-col>
-      </a-row>
-      <a-row :gutter="16">
-        <a-col class="gutter-row" :span="12">
-          <a-form-item label="每层户数">
+          <a-form-item :label="roomNumberLabel">
             <a-input-number :step="1" v-model:value="formData.roomNumber" />
           </a-form-item>
         </a-col>
-        <a-col class="gutter-row" :span="12">
-          <a-form-item label="户号是否单元独立编号">
-            <a-switch v-model:checked="formData.roomNumberResetByUnit" />
-          </a-form-item>
-        </a-col>
+        <template v-if="formData.hasUnit">
+          <a-col class="gutter-row" :span="12">
+            <a-form-item label="户号是否单元独立编号">
+              <a-switch v-model:checked="formData.roomNumberResetByUnit" />
+            </a-form-item>
+          </a-col>
+        </template>
       </a-row>
       <a-row :gutter="16">
         <a-col>
@@ -289,4 +315,8 @@ async function createRoom(unit: AreaVO, j: number) {
   </a-modal>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.gutter-row {
+  margin-bottom: 12px;
+}
+</style>
